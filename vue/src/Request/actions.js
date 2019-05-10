@@ -7,12 +7,31 @@ export default{
     addUser(data){
         return Axios.post('/signup/add', data)
         .then(function(response){
-            console.log(response)
+            console.log("Response: " + response.data)
+            return true
         })
         .catch(function(error){
-            console.log(error)
+            console.log("Error: " + error)
+            return false
         });
     },
+
+    loginUser(data){
+        return Axios.post('/login/user', data)
+        .then(function(response){
+            const token = response.data.access_token
+            localStorage.userToken = token
+            localStorage.connected = true
+            return true
+        })
+        .catch(function(error){
+            localStorage.removeItem('userToken')
+            console.log(error)
+            return false
+        });
+    },
+
+}
 
     // retrieveToken(credentials){
     //     const requestBody = {
@@ -35,16 +54,3 @@ export default{
     //     console.log(error)
     //     )
     // },
-
-    loginUser(data){
-        return Axios.post('/login/user', data)
-        .then(function(response){
-            console.log(response)
-        })
-        .catch(function(error){
-            console.log(error)
-        });
-    },
-
-}
-

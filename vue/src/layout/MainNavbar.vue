@@ -18,13 +18,13 @@
         </router-link>
       </li>
 
-      <li class="nav-item"> 
+      <li class="nav-item" v-if="userSignedIn"> 
         <router-link class="nav-link" to="/login">
           Giriş Yap
         </router-link>
       </li>
 
-      <li class="nav-item"> 
+      <li class="nav-item" v-if ="userSignedIn"> 
         <router-link class="nav-link" to="/signup">
           Kayıt Ol
         </router-link>
@@ -88,6 +88,17 @@ export default {
     NavbarToggleButton,
     NavLink,
     [Popover.name]: Popover
+  },
+  data(){
+    return{
+      userSignedIn: true
+    }
+  },
+  methods:{
+    checkSignIn(){
+      this.userSignedIn = localStorage.connected
+    }
+
   }
 };
 </script>

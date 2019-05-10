@@ -7,6 +7,7 @@ import com.adildemokrasi.adil.Repository.UserRepository;
 import com.adildemokrasi.adil.RequestObjects.UserRequestDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,9 +18,11 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.stereotype.Service;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -48,21 +51,31 @@ public class UserService {
         return 1L;
     }
 
-    public Long addUser(UserRequestDto userDTO){
-        User user = new User();
-        ModelMapper mapper = new ModelMapper();
-        mapper.map(userDTO, user);
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        Set<Role> roleList = new HashSet<>();
-        roleList.add(roleService.getRole("USER"));
-        user.setRoles(roleList);
-        user.setActive(true);
-        try{
-            userRepository.save(user);
-            return Status.SUCCESS.getStatus();
+    public boolean checkUserExistByUsername(String username){
+        Optional <User> user = userRepository.findByUsername(username);
+        return user.isPresent();
+    }
+
+    public Long addUser(UserRequestDto userDTO) throws Exception{
+        if(checkUserExistByUsername(userDTO.getUsername())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username Already Exists");
         }
-        catch (Exception e){
-            return Status.ERROR.getStatus();
+        else {
+            User user = new User();
+            ModelMapper mapper = new ModelMapper();
+            mapper.map(userDTO, user);
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            Set<Role> roleList = new HashSet<>();
+            roleList.add(roleService.getRole("USER"));
+            user.setRoles(roleList);
+            user.setActive(true);
+            try{
+                userRepository.save(user);
+                return Status.SUCCESS.getStatus();
+            }
+            catch (Exception e){
+                return Status.ERROR.getStatus();
+            }
         }
     }
 

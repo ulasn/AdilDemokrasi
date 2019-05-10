@@ -13,7 +13,7 @@ public class SignupController {
     private UserService userService;
 
     @RequestMapping(path="/add", method = RequestMethod.POST)
-    public @ResponseBody Long addNewUser(@RequestBody UserRequestDto userDTO){
+    public @ResponseBody Long addNewUser(@RequestBody UserRequestDto userDTO) throws Exception{
         return userService.addUser(userDTO);
     }
 }

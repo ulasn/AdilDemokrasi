@@ -5,11 +5,15 @@ import router from './router';
 import NowUiKit from './plugins/now-ui-kit';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import VeeValidate from 'vee-validate';
+
 
 Vue.config.productionTip = false;
 
 Vue.use(NowUiKit);
 Vue.use(ElementUI);
+Vue.use(VeeValidate);
+
 
 
 new Vue({
