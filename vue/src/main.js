@@ -4,6 +4,7 @@ import App from './App.vue';
 import router from './router';
 import NowUiKit from './plugins/now-ui-kit';
 import ElementUI from 'element-ui';
+import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css';
 import VeeValidate from 'vee-validate';
 
@@ -11,10 +12,10 @@ import VeeValidate from 'vee-validate';
 Vue.config.productionTip = false;
 
 Vue.use(NowUiKit);
-Vue.use(ElementUI);
+Vue.use(ElementUI, { locale });
 Vue.use(VeeValidate);
 
-
+export const bus = new Vue();
 
 new Vue({
   router,

@@ -1,5 +1,5 @@
 import Axios from "axios";
-
+import {bus} from "../main"
 
 Axios.defaults.baseURL = "http://localhost:8000";
 
@@ -19,9 +19,9 @@ export default{
     loginUser(data){
         return Axios.post('/login/user', data)
         .then(function(response){
-            const token = response.data.access_token
-            localStorage.userToken = token
-            localStorage.connected = true
+            let token = response.data.access_token
+            localStorage.setItem('access_token', token)
+            bus.$emit('logged', 'User logged')
             return true
         })
         .catch(function(error){

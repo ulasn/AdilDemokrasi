@@ -8,7 +8,7 @@
   >
     <template slot-scope="{ toggle, isToggled }">
       <router-link class="navbar-brand" to="/">
-        Acil Demokrasi
+        <b>ADİL Demokrasİ</b>
       </router-link>
     </template>
     <template slot="navbar-menu">
@@ -18,16 +18,23 @@
         </router-link>
       </li>
 
-      <li class="nav-item" v-if="userSignedIn"> 
+      <li class="nav-item" v-if="isLogged === false"> 
         <router-link class="nav-link" to="/login">
           Giriş Yap
         </router-link>
       </li>
 
-      <li class="nav-item" v-if ="userSignedIn"> 
+      <li class="nav-item" v-if ="isLogged === false"> 
         <router-link class="nav-link" to="/signup">
           Kayıt Ol
         </router-link>
+      </li>
+
+      <li class="nav-item" v-if ="isLogged === true" > 
+        
+        
+         <n-button type="primary"  class="nav-link" @click="signOut">  Çıkış Yap  </n-button>
+        
       </li>
 
       <li class="nav-item">
@@ -74,8 +81,10 @@
 </template>
 
 <script>
-import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
+import { DropDown, NavbarToggleButton, Navbar, NavLink,Button } from '@/components';
 import { Popover } from 'element-ui';
+import {bus} from "../main"
+
 export default {
   name: 'main-navbar',
   props: {
@@ -87,20 +96,42 @@ export default {
     Navbar,
     NavbarToggleButton,
     NavLink,
-    [Popover.name]: Popover
+    [Popover.name]: Popover,
+    [Button.name]: Button
   },
   data(){
     return{
-      userSignedIn: true
+      isLogged: this.checkIfIsLogged()
     }
   },
+  created(){
+      bus.$on('logged', () =>{
+        this.isLogged = this.checkIfIsLogged()
+      })
+  },
   methods:{
-    checkSignIn(){
-      this.userSignedIn = localStorage.connected
+    checkIfIsLogged(){
+      let token = localStorage.getItem('access_token')
+      if(token){
+        return true
+      }
+      else{
+        return false
+      }
+    },
+    signOut(){
+      localStorage.removeItem('access_token')
+      this.isLogged = this.checkIfIsLogged()
+      this.$alert('Başarıyla çıkış yapılmıştır.')
+      this.$router.push('/')
     }
 
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.navbar .navbar-nav .nav-link:not(.btn){
+  cursor:pointer;
+}
+</style>
