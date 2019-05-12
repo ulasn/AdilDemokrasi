@@ -110,6 +110,7 @@ export default {
         Actions.loginUser(this.user)
                 .then(response => {
                     if(response){
+                        localStorage.setItem('username', this.user.username)
                         this.$router.push('/')
                     }
                     else{

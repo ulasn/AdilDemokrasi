@@ -13,9 +13,11 @@
 </template>
 <script>
 export default {
-  beforeMount(){
-    localStorage.connected = false
-  }
-  
 };
 </script>
+<style>
+.pac-container{
+    z-index: 1050;
+}
+</style>
+

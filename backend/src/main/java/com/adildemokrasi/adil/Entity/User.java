@@ -2,7 +2,6 @@ package com.adildemokrasi.adil.Entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +30,14 @@ public class User extends BaseCreation {
     private boolean active;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinTable(name="user_role", joinColumns = @JoinColumn(name ="user_id"), inverseJoinColumns = @JoinColumn(name ="role_id"))
+    @JoinTable(name="user_role", joinColumns = @JoinColumn(name ="user_id"),
+            inverseJoinColumns = @JoinColumn(name ="role_id"))
     private Set<Role> roles;
+
+    @ManyToMany
+    @JoinTable(name="user_event", joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="event_id"))
+    private List<Event> events;
 
     public User() {
     }
@@ -117,5 +122,17 @@ public class User extends BaseCreation {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
+    public void addEvent(Event event){
+        this.events.add(event);
     }
 }
