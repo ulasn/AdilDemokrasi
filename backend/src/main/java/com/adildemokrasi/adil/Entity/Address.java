@@ -3,7 +3,7 @@ package com.adildemokrasi.adil.Entity;
 import javax.persistence.*;
 
 @Entity
-public class Address {
+public class Address extends BaseCreation{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

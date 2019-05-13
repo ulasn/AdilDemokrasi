@@ -1,4 +1,4 @@
-package com.adildemokrasi.adil.Dto;
+package com.adildemokrasi.adil.RequestObjects;
 
 import com.adildemokrasi.adil.Entity.Address;
 

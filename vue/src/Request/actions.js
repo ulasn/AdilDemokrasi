@@ -7,11 +7,9 @@ export default {
   addUser(data) {
     return Axios.post("/signup/add", data)
       .then(function(response) {
-        console.log("Response: " + response.data);
         return true;
       })
       .catch(function(error) {
-        console.log("Error: " + error);
         return false;
       });
   },
@@ -21,12 +19,44 @@ export default {
       .then(function(response) {
         let token = response.data.access_token;
         localStorage.setItem("access_token", token);
+        localStorage.logged = true
         bus.$emit("logged", "User logged");
         return true;
       })
       .catch(function(error) {
         localStorage.removeItem("userToken");
-        console.log(error);
+        return false;
+      });
+  },
+
+  getUserProfileData(){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.get("user/get/profile", config)
+      .then(function(response) {
+        return response;
+      })
+      .catch(function(response) {
+        console.log(response)
+      });
+  },
+
+  shareAnnouncement(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("user/new/announcement", data, config)
+      .then(function(response) {
+        return true
+      })
+      .catch(function(response) {
         return false;
       });
   },
@@ -38,7 +68,7 @@ export default {
       }
     };
 
-    return Axios.post("user/newevent", data, config)
+    return Axios.post("user/new/event", data, config)
       .then(function(response) {
         return true
       })

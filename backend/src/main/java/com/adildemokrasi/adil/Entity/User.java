@@ -2,6 +2,7 @@ package com.adildemokrasi.adil.Entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +28,15 @@ public class User extends BaseCreation {
     @NotNull
     private String password;
 
+    private String twitter;
+
+    private String instagram;
+
+    private String aboutMe;
+
     private boolean active;
+
+    private boolean deleted;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name="user_role", joinColumns = @JoinColumn(name ="user_id"),
@@ -39,7 +48,20 @@ public class User extends BaseCreation {
             inverseJoinColumns = @JoinColumn(name="event_id"))
     private List<Event> events;
 
+    @OneToMany
+    @JoinTable(name="user_announcement", joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="announcement_id"))
+    private List<Announcement> announcements;
+
+    @OneToMany
+    @JoinTable(name="user_comment", joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="comment_id"))
+    private List<Comment> comments;
+
+
+
     public User() {
+        this.deleted = false;
     }
 
     public User(@NotNull String name, @NotNull String surname, String username, @NotNull String email, @NotNull String password, Set<Role> roles) {
@@ -124,6 +146,75 @@ public class User extends BaseCreation {
         this.active = active;
     }
 
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void addComment(Comment comment){
+        if(this.comments == null){
+            List<Comment> comments = new ArrayList<>();
+            comments.add(comment);
+        }
+        else{
+            this.comments.add(comment);
+        }
+    }
+
+    public List<Announcement> getAnnouncements() {
+        return announcements;
+    }
+
+    public void setAnnouncements(List<Announcement> announcements) {
+        this.announcements = announcements;
+    }
+
+    public void addAnnouncement(Announcement announcement){
+        if(this.announcements == null){
+            List<Announcement> announcements = new ArrayList<>();
+            announcements.add(announcement);
+            this.announcements = announcements;
+        }
+        else{
+            this.announcements.add(announcement);
+        }
+    }
+
     public List<Event> getEvents() {
         return events;
     }
@@ -133,6 +224,14 @@ public class User extends BaseCreation {
     }
 
     public void addEvent(Event event){
-        this.events.add(event);
+        if(this.events == null){
+            List<Event> events = new ArrayList<>();
+            events.add(event);
+            this.events = events;
+        }
+        else{
+            this.events.add(event);
+        }
     }
+
 }

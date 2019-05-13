@@ -15,6 +15,10 @@
       <li class="nav-item">
         <router-link class="nav-link" to="/about">Hakkında</router-link>
       </li>
+      
+      <li class="nav-item" v-if="isLogged === true">
+        <router-link class="nav-link" to="/profile">Profİl</router-link>
+      </li>
 
       <li class="nav-item" v-if="isLogged === false">
         <router-link class="nav-link" to="/login">Giriş Yap</router-link>
@@ -253,6 +257,7 @@ export default {
 
     signOut() {
       localStorage.removeItem("access_token");
+      localStorage.logged = false
       this.isLogged = this.checkIfIsLogged();
       this.$alert("Başarıyla çıkış yapılmıştır.");
       this.$router.push("/");
@@ -295,6 +300,8 @@ export default {
 <style scoped>
 .navbar .navbar-nav .nav-link:not(.btn) {
   cursor: pointer;
+  font-size:0.8em;
+  padding:0.5rem 1.2rem;
 }
 .block {
   display: grid;
@@ -311,6 +318,10 @@ export default {
   width: 325px;
 }
 
-.el-form {
+b{
+  font-size:1.2em;
+}
+.navbar .navbar-nav .nav-link.btn{
+  margin-top:2px
 }
 </style>

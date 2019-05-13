@@ -10,6 +10,16 @@ import Signup from './pages/Signup.vue'
 
 Vue.use(Router);
 
+function guard(to,from,next){
+  if(localStorage.logged == "true"){
+    next();
+  }
+  else{
+    next('/login')
+  }
+  
+}
+
 export default new Router({
   linkExactActiveClass: 'active',
   routes: [
@@ -45,6 +55,7 @@ export default new Router({
     },
     {
       path: '/profile',
+      beforeEnter:guard,
       name: 'profile',
       components: { default: Profile, header: MainNavbar, footer: MainFooter },
       props: {

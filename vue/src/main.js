@@ -13,7 +13,8 @@ Vue.config.productionTip = false;
 
 Vue.use(NowUiKit);
 Vue.use(ElementUI, { locale });
-Vue.use(VeeValidate);
+Vue.use(VeeValidate,  {  inject: true,
+  fieldsBagName: 'veeFields' });
 
 export const bus = new Vue();
 

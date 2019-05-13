@@ -1,6 +1,6 @@
 package com.adildemokrasi.adil.Service;
 
-import com.adildemokrasi.adil.Dto.EventRequestDTO;
+import com.adildemokrasi.adil.RequestObjects.EventRequestDTO;
 import com.adildemokrasi.adil.Entity.Event;
 import com.adildemokrasi.adil.Entity.User;
 import com.adildemokrasi.adil.Repository.AddressRepository;
