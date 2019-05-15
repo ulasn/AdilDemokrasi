@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="page-header clear-filter" filter-color="orange">
-      <parallax class="page-header-image" style="background-image:url('img/bg5.jpg')"></parallax>
+      <parallax class="page-header-image" v-bind:style="coverLink"></parallax>
       <div class="container">
         <div class="photo-container">
           <img src="img/avatar.png" alt>
@@ -28,6 +28,7 @@
       <div class="container">
         <div class="button-container">
           <n-button
+            v-if="ownUser"
             @click.native="modals.classic = true"
             class="btn btn-primary btn-round btn-lg"
           >Yeni Duyuru</n-button>
@@ -67,25 +68,29 @@
             </template>
           </modal>
 
-          <n-button
+          <a
+            v-if="profile.twitter != null"
             v-bind:href="profile.twitter"
             class="btn btn-default btn-round btn-lg btn-icon"
             rel="tooltip"
             title="Follow me on Twitter"
+            target="_blank"
           >
             <i class="fab fa-twitter"></i>
-          </n-button>
-          <n-button
+          </a>
+          <a
+            v-if="profile.instagram != null"
             v-bind:href="profile.instagram"
             class="btn btn-default btn-round btn-lg btn-icon"
             rel="tooltip"
             title="Follow me on Instagram"
+            target="_blank"
           >
             <i class="fab fa-instagram"></i>
-          </n-button>
+          </a>
         </div>
         <h3 class="title">Hakkında</h3>
-        <h5 class="description">{{profile.about}}</h5>
+        <h5 class="description">{{profile.aboutMe}}</h5>
 
         <div class="container">
           <div class="title">
@@ -140,10 +145,61 @@
                     </ul>
                     <p v-if="!announcementExist">{{this.announcementNotExistMessage}}</p>
                   </tab-pane>
-                  <tab-pane>
+
+                  <tab-pane v-if="ownUser">
                     <template slot="label">
                       <i class="now-ui-icons ui-2_settings-90"></i> Ayarlar
-                    </template>                    
+                    </template>
+
+                    <div class="profileSettings">
+                      <label for="name">İsim</label>
+                      <el-input name="name" type="input" v-model="settings.name"></el-input>
+                      <div class="giveSpace"></div>
+
+                      <label for="surname">Soyadı</label>
+                      <el-input name="surname" type="input" v-model="settings.surname"></el-input>
+                      <div class="giveSpace"></div>
+
+                      <label for="aboutMe" style="padding-bottom:60px">Hakkında</label>
+                      <el-input
+                        name="aboutMe"
+                        type="textarea"
+                        :autosize="{ minRows: 5, maxRows: 5}"
+                        placeholder="Kendiniz Hakkında Yazın."
+                        v-model="settings.aboutMe"
+                      ></el-input>
+                      <div class="giveSpace"></div>
+                      <div class="giveSpace"></div>
+
+                      <label for="job">Meslek</label>
+                      <el-input
+                        name="job"
+                        type="input"
+                        placeholder="Mesleğinizi Belirtin."
+                        v-model="settings.job"
+                      ></el-input>
+                      <div class="giveSpace"></div>
+
+                      <label for="twitter">Twitter</label>
+                      <el-input
+                        name="twitter"
+                        placeholder="Twitter Url'inizi girerseniz profilinize eklenecektir."
+                        type="input"
+                        v-model="settings.twitter"
+                      ></el-input>
+                      <div class="giveSpace"></div>
+
+                      <label for="instagram">Instagram</label>
+                      <el-input
+                        name="instagram"
+                        type="input"
+                        placeholder="Instagram Url'inizi girerseniz profiline eklecektir."
+                        v-model="settings.instagram"
+                      ></el-input>
+                      <div class="giveSpace"></div>
+
+                      <n-button @click="saveSettings">Kaydet</n-button>
+                    </div>
                   </tab-pane>
                 </tabs>
               </card>
@@ -172,12 +228,30 @@ export default {
     Modal,
     [Button.name]: Button
   },
+  watch: {
+    $route(to, from) {
+      this.onRefresh()
+    }
+  },
+  beforeMount(){
+    this.coverImage();
+  },
+
   mounted() {
-    this.mountData();
+    this.username = this.$route.params.username;
+    if (this.username === undefined) {
+      this.username = "";
+      this.mountData(this.username);
+    } else {
+      this.mountData(this.username);
+    }
   },
   data() {
     return {
+      username: "",
+      coverLink:"",
       profile: {
+        username: "",
         name: "",
         surname: "",
         job: "",
@@ -190,9 +264,13 @@ export default {
         announcementCount: "",
         commentCount: ""
       },
-      settings:{
-        aboutMe:'',
-        job:'',
+      settings: {
+        name: "",
+        surname: "",
+        aboutMe: "",
+        job: "",
+        instagram: "",
+        twitter: ""
       },
       announcement: {
         title: "",
@@ -201,6 +279,7 @@ export default {
       modals: {
         classic: false
       },
+      ownUser: false,
       rules: {},
       eventExist: false,
       announcementExist: false,
@@ -211,11 +290,36 @@ export default {
     };
   },
   methods: {
-    mountData() {
-      let responseData;
-      Actions.getUserProfileData().then(response => {
+    onRefresh() {
+      this.username = this.$route.params.username;
+      if (this.username === undefined) {
+        this.username = "";
+        this.mountData(this.username);
+      } else {
+        this.mountData(this.username);
+      }
+    },
+
+    ownUserCheck() {
+      if (this.profile.username == localStorage.getItem("username")) {
+        this.ownUser = true;
+        this.setSettings();
+      } else {
+        this.ownUser = false;
+      }
+    },
+
+    mountData(username) {
+      Actions.getUserProfileData(username).then(response => {
         this.fillUserProfile(response.data);
       });
+    },
+
+    coverImage(){
+      debugger
+      let randomNumber = Math.floor(Math.random() * 5) + 1  
+      let link = "background-image:url('img/cover/"+ randomNumber + ".jpg')"
+      this.coverLink = link
     },
 
     events() {
@@ -234,7 +338,24 @@ export default {
       }
     },
 
+    aboutExist() {
+      if (this.profile.aboutMe == null) {
+        this.profile.aboutMe =
+          "Ayarlar'dan hakkında kısmını doldurabilirsiniz.";
+      }
+    },
+
+    setSettings() {
+      this.settings.name = this.profile.name;
+      this.settings.surname = this.profile.surname;
+      this.settings.aboutMe = this.profile.aboutMe;
+      this.settings.instagram = this.profile.instagram;
+      this.settings.job = this.profile.job;
+      this.settings.twitter = this.profile.twitter;
+    },
+
     fillUserProfile(data) {
+      this.profile.username = data.username;
       this.profile.name = data.name;
       this.profile.surname = data.surname;
       this.profile.job = data.job;
@@ -246,8 +367,24 @@ export default {
       this.profile.eventCount = data.eventCount;
       this.profile.announcementCount = data.announcementCount;
       this.profile.commentCount = data.announcementCount;
+      this.ownUserCheck();
       this.events();
       this.announce();
+      this.aboutExist();
+    },
+
+    saveSettings(){
+        Actions.saveSettings(this.settings)
+          .then(response => {
+            if(response){
+              this.$alert('Ayarlarınız başarıyla kaydedilmiştir.')
+              this.onRefresh()
+            }
+            else{
+              this.$alert('Beklenmeyen bir hata oldu lütfen tekrar deneyin.')
+              this.onRefresh()
+            }
+          })
     },
 
     cleanAnnouncementObject() {
@@ -277,12 +414,39 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 ul {
   list-style: none;
 }
 
 .customCard {
   text-align: left;
+}
+
+.giveSpace {
+  padding: 10px;
+}
+
+.profileSettings .el-input {
+  width: 70%;
+  float: right;
+}
+
+.profileSettings .label {
+  padding-right: 10px;
+  display: inline-block;
+  float: left;
+  clear: left;
+  text-align: right;
+  width: 150px;
+}
+
+.profileSettings .el-textarea {
+  width: 70%;
+  float: right;
+}
+
+.card{
+  min-height: 550px;
 }
 </style>

@@ -15,18 +15,23 @@
       <li class="nav-item">
         <router-link class="nav-link" to="/about">Hakkında</router-link>
       </li>
-      
+      <li class="nav-item">
+        <router-link class="nav-link" to="/organization">Kurumlar</router-link>
+      </li>
+
       <li class="nav-item" v-if="isLogged === true">
         <router-link class="nav-link" to="/profile">Profİl</router-link>
       </li>
 
       <li class="nav-item" v-if="isLogged === false">
-        <router-link class="nav-link" to="/login">Giriş Yap</router-link>
+        <router-link class="nav-link" to="/login">Gİrİş Yap</router-link>
       </li>
 
       <li class="nav-item" v-if="isLogged === false">
         <router-link class="nav-link" to="/signup">Kayıt Ol</router-link>
       </li>
+
+      <div style="padding:5px"></div>
 
       <li class="nav-item" v-if="isLogged === true">
         <n-button
@@ -36,8 +41,22 @@
         >Yeni Etkinlik</n-button>
       </li>
 
+      <div style="padding:5px"></div>
+
       <li class="nav-item" v-if="isLogged === true">
         <n-button type="primary" class="nav-link" @click="signOut">Çıkış Yap</n-button>
+      </li>
+
+      <div style="padding:5px"></div>
+
+      <li class="nav-item" v-if="isLogged === true">
+        <el-autocomplete
+          v-model="search"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="Arama"
+          :trigger-on-focus="false"
+          @select="handleSelect"
+        ></el-autocomplete>
       </li>
 
       <li class="nav-item">
@@ -66,6 +85,10 @@
           <p class="d-lg-none d-xl-none">Facebook</p>
         </a>
       </li>
+      <!-- Navigation End -->
+
+      <!-- Modal for new Event -->
+
       <modal :show.sync="modals.classic" headerClasses="justify-content-center">
         <h4 slot="header" class="title title-up" style="color:black;">Etkİnlİk</h4>
         <el-form :model="event" :rules="rules" ref="ruleForm" class="demo-ruleForm">
@@ -175,6 +198,9 @@ export default {
       modals: {
         classic: false
       },
+      search: "",
+      links: "",
+      timeout: "",
       event: {
         title: "",
         content: "",
@@ -226,21 +252,43 @@ export default {
   },
   methods: {
     checkIfIsLogged() {
-      let token = localStorage.getItem("access_token");
-      if (token) {
+      if (localStorage.logged == "true") {
         return true;
       } else {
         return false;
       }
     },
+
+    querySearchAsync(queryString, cb) {
+      var results;
+      if (queryString != "") {
+        Actions.searchUser(queryString)
+          .then(response => {
+            results = response.data.filteredUserList;
+
+            var usernames = []
+            results.forEach(function(user){
+              usernames.push({value: user.username})
+            })
+
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+              cb(usernames);
+            }, 3000 * Math.random());
+          })
+          .catch(response => {
+          });
+      }
+    },
+
     getAddressData(addressData, placeResultData, id) {
       this.event.address.route = addressData.route;
       this.event.address.latitude = addressData.latitude;
       this.event.address.longitude = addressData.longitude;
     },
 
-    returnCleanEventObject(){
-        let event = {
+    returnCleanEventObject() {
+      let event = {
         title: "",
         content: "",
         location: "",
@@ -250,20 +298,23 @@ export default {
           latitude: "",
           longitude: ""
         }
-        };
+      };
 
-        return event;
+      return event;
+    },
+    handleSelect(item) {
+        this.$router.push({name:'profileParam', params:{username: item.value}})
     },
 
     signOut() {
       localStorage.removeItem("access_token");
-      localStorage.logged = false
+      localStorage.logged = false;
       this.isLogged = this.checkIfIsLogged();
       this.$alert("Başarıyla çıkış yapılmıştır.");
       this.$router.push("/");
     },
     shareEvent() {
-      this.$refs['ruleForm'].validate(valid => {
+      this.$refs["ruleForm"].validate(valid => {
         if (valid) {
           let eventRequest = {
             title: this.event.title,
@@ -277,12 +328,12 @@ export default {
             if (response) {
               this.modals.classic = false;
               this.$alert("Etkinlik başarıyla kaydedilmiştir.");
-              this.event = this.returnCleanEventObject()
+              this.event = this.returnCleanEventObject();
               this.$refs.address.clear();
               this.$router.push("/");
             } else {
               this.modals.classic = false;
-              this.event = returnCleanEventObject()
+              this.event = returnCleanEventObject();
               this.$alert(
                 "Beklenmedik bir hata oluştu, lütfen tekrar deneyin."
               );
@@ -300,8 +351,8 @@ export default {
 <style scoped>
 .navbar .navbar-nav .nav-link:not(.btn) {
   cursor: pointer;
-  font-size:0.8em;
-  padding:0.5rem 1.2rem;
+  font-size: 0.8em;
+  padding: 0.5rem 1.2rem;
 }
 .block {
   display: grid;
@@ -315,13 +366,14 @@ export default {
 }
 
 .el-input {
-  width: 325px;
+  width:100%;
 }
 
-b{
-  font-size:1.2em;
+b {
+  font-size: 1.2em;
 }
-.navbar .navbar-nav .nav-link.btn{
-  margin-top:2px
+.navbar .navbar-nav .nav-link.btn {
+  margin-top: 2px;
+  padding:11px 20px;
 }
 </style>

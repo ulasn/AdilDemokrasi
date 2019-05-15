@@ -1,14 +1,14 @@
 <template>
   <div class="page-header clear-filter" filter-color="orange">
-    <div class="page-header-image" style="background-image: url('img/login.jpg')"></div>
+    <div class="page-header-image" style="background-image: url('img/login.png')"></div>
     <div class="content">
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
           <card type="login" plain>
-            <div slot="header" class="logo-container">
-              <img v-lazy="'img/now-logo.png'" alt>
+            <div slot="header">
+              <img style="width:65%;" src="img/logo_transparent.png" alt>
             </div>
-
+              
             <fg-input
               id="username"
               name="username"
@@ -17,6 +17,7 @@
               addon-left-icon="now-ui-icons users_circle-08"
               placeholder="Kullanıcı Adı"
               v-model="user.username"
+              v-on:keyup.enter="login"
             ></fg-input>
 
             <fg-input
@@ -27,6 +28,8 @@
               addon-left-icon="now-ui-icons text_caps-small"
               placeholder="Şifre"
               v-model="user.password"
+              v-on:keyup.enter="login"
+              style="margin-bottom:-10px"
             ></fg-input>
 
             <el-alert
@@ -52,7 +55,7 @@
               </div>
               <div class="pull-right">
                 <h6>
-                  <a href="#pablo" class="link footer-link">Yardım?</a>
+                  <a href="#" class="link footer-link">Yardım?</a>
                 </h6>
               </div>
             </template>
@@ -111,7 +114,7 @@ export default {
                 .then(response => {
                     if(response){
                         localStorage.setItem('username', this.user.username)
-                        this.$router.push('/')
+                        this.$router.push('/profile')
                     }
                     else{
                        this.description = "Lütfen doğru kullanıcı adı ve şifre giriniz."

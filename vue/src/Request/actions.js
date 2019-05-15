@@ -3,14 +3,25 @@ import { bus } from "../main";
 
 Axios.defaults.baseURL = "http://localhost:8000";
 
+Axios.interceptors.response.use(response => {
+  return response;
+}, error => {
+ if (error.response.status === 401) {
+    localStorage.removeItem("access_token");
+    localStorage.logged = false;
+    this.$router.push('/login')
+ }
+ return error;
+});
+
 export default {
   addUser(data) {
     return Axios.post("/signup/add", data)
       .then(function(response) {
-        return true;
+        return response;
       })
       .catch(function(error) {
-        return false;
+        return error;
       });
   },
 
@@ -29,10 +40,13 @@ export default {
       });
   },
 
-  getUserProfileData(){
+  getUserProfileData(username){
     var config = {
       headers: {
         Authorization: "bearer " + localStorage.getItem("access_token")
+      },
+      params:{
+        username: username
       }
     };
 
@@ -40,8 +54,9 @@ export default {
       .then(function(response) {
         return response;
       })
-      .catch(function(response) {
-        console.log(response)
+      .catch(error => {
+        let errorObject=JSON.parse(JSON.stringify(error));
+        console.log(errorObject);
       });
   },
 
@@ -69,6 +84,42 @@ export default {
     };
 
     return Axios.post("user/new/event", data, config)
+      .then(function(response) {
+        return true
+      })
+      .catch(function(response) {
+        return false;
+      });
+  },
+
+  searchUser(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token"),
+      },
+      params:{
+        searchQuery: data
+      }
+    };
+
+    return Axios.get("user/search/user", config)
+      .then(function(response) {
+        return response
+      })
+      .catch(function(response) {
+        return response;
+      });
+
+  },
+
+  saveSettings(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("user/settings", data, config)
       .then(function(response) {
         return true
       })

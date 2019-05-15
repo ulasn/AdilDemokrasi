@@ -1,5 +1,6 @@
 package com.adildemokrasi.adil.Controller;
 
+import com.adildemokrasi.adil.Dto.SearchResultDTO;
 import com.adildemokrasi.adil.Dto.UserProfileDTO;
 import com.adildemokrasi.adil.RequestObjects.AnnouncementRequestDTO;
 import com.adildemokrasi.adil.RequestObjects.EventRequestDTO;
@@ -44,8 +45,19 @@ public class UserController {
     }
 
     @RequestMapping(path="/get/profile", method = RequestMethod.GET)
-    public @ResponseBody UserProfileDTO getUserProfileData() throws Exception{
-        return userService.getUserProfileData();
+    public @ResponseBody UserProfileDTO getUserProfileData(@RequestParam(name = "username") String username) throws Exception{
+        return userService.getUserProfileData(username);
+    }
+
+    @RequestMapping(path="/search/user", method = RequestMethod.GET)
+    public @ResponseBody SearchResultDTO getSearchResults(@RequestParam(name = "searchQuery") String searchQuery){
+        return userService.getSearchResults(searchQuery);
+    }
+
+    @RequestMapping(path="/settings", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody void saveSettings(@RequestBody UserProfileDTO userProfileDTO){
+        userService.saveUserSettings(userProfileDTO);
     }
 
 }

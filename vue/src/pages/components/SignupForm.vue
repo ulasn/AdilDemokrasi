@@ -3,65 +3,35 @@
     class="section section-signup"
     style="background-image: url('img/bg11.jpg'); background-size: cover; background-position: top center; min-height: 700px;"
   >
-    <div class="container">
+    <div class="container" style="margin-top:-100px">
       <div class="row">
         <card class="card-signup" header-classes="text-center" color="orange">
           <template slot="header">
-            <h3 class="card-title title-up">Sign Up</h3>
-            <div class="social-line">
-              <a
-                href="#pablo"
-                class="btn btn-neutral btn-facebook btn-icon btn-round"
-              >
-                <i class="fab fa-facebook-square"></i>
-              </a>
-              <a
-                href="#pablo"
-                class="btn btn-neutral btn-twitter btn-icon btn-lg btn-round"
-              >
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a
-                href="#pablo"
-                class="btn btn-neutral btn-google btn-icon btn-round"
-              >
-                <i class="fab fa-google-plus"></i>
-              </a>
-            </div>
+            <h3 class="card-title title-up">Maİl Lİstesİ</h3>
+            
           </template>
           <template>
-            <fg-input
-              class="no-border"
-              placeholder="First Name..."
-              addon-left-icon="now-ui-icons users_circle-08"
-            >
-            </fg-input>
-
-            <fg-input
-              class="no-border"
-              placeholder="Last Name..."
-              addon-left-icon="now-ui-icons text_caps-small"
-            >
-            </fg-input>
+  
 
             <fg-input
               class="no-border"
               placeholder="Email"
+              :disabled=true
               addon-left-icon="now-ui-icons ui-1_email-85"
             >
             </fg-input>
           </template>
           <div class="card-footer text-center">
-            <n-button type="neutral" round size="lg">Get Started</n-button>
+            <n-button type="neutral" round size="lg" @click="mailListSubmit">Kaydet </n-button>
           </div>
         </card>
       </div>
       <div class="col text-center">
         <router-link
-          to="/login"
+          to="/signup"
           class="btn btn-simple btn-round btn-white btn-lg"
         >
-          View Login Page
+          Hesap Oluştur
         </router-link>
       </div>
     </div>
@@ -75,7 +45,16 @@ export default {
     Card,
     [Button.name]: Button,
     [FormGroupInput.name]: FormGroupInput
+  },
+  methods:{
+    mailListSubmit(){
+      this.$alert('Mail Listesini Yakında oluşturacağız. Beklemede Kal.')
+    }
   }
 };
 </script>
-<style></style>
+<style scoped>
+.card{
+  min-height:400px; 
+}
+</style>

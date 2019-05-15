@@ -1,8 +1,6 @@
 package com.adildemokrasi.adil.Service;
 
-import com.adildemokrasi.adil.Dto.AnnouncementDTO;
-import com.adildemokrasi.adil.Dto.EventDTO;
-import com.adildemokrasi.adil.Dto.UserProfileDTO;
+import com.adildemokrasi.adil.Dto.*;
 import com.adildemokrasi.adil.Entity.Announcement;
 import com.adildemokrasi.adil.Entity.Event;
 import com.adildemokrasi.adil.Entity.Role;
@@ -59,9 +57,23 @@ public class UserService {
         return user.isPresent();
     }
 
+    public boolean checkEmailExist(String email){
+        Optional<User> user = userRepository.findByEmail(email);
+        if(user.isPresent()){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
     public Long addUser(UserRequestDto userDTO) throws Exception{
         if(checkUserExistByUsername(userDTO.getUsername())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username Already Exists");
+        }
+        if(checkEmailExist(userDTO.getEmail())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email Already Exists");
         }
         else {
             User user = new User();
@@ -176,9 +188,52 @@ public class UserService {
         return userProfileDTO;
     }
 
-    public UserProfileDTO getUserProfileData() throws Exception{
-        User user = getCurrentUser();
+    public UserProfileDTO getUserProfileData(String username) throws Exception{
+        User user;
+        if(username == ""){
+            user = getCurrentUser();
+        }
+        else{
+            try{
+                user = userRepository.findByUsername(username).get();
+            }
+            catch(Exception e){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No User Exists with that username");
+            }
+
+        }
+
         UserProfileDTO userProfileDTO = fillUserProfileDTO(user);
         return userProfileDTO;
+    }
+
+    public SearchResultDTO getSearchResults(String searchQuery){
+        List<User> users = userRepository.findByNameIgnoreCaseContainingOrSurnameIgnoreCaseContainingOrUsernameIgnoreCaseContaining(searchQuery,searchQuery,searchQuery);
+        int index = 0;
+        SearchResultDTO searchResultDTO = new SearchResultDTO();
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for(User user : users){
+            UserDTO userDTO = new UserDTO();
+            userDTO.setName(user.getName());
+            userDTO.setSurname(user.getSurname());
+            userDTO.setUsername(user.getUsername());
+            userDTOList.add(userDTO);
+            index++;
+            if(index == 5)
+                break;
+        }
+        searchResultDTO.setFilteredUserList(userDTOList);
+        return searchResultDTO;
+    }
+
+    public void saveUserSettings(UserProfileDTO userProfileDTO) {
+        User user = getCurrentUser();
+        user.setName(userProfileDTO.getName());
+        user.setSurname(userProfileDTO.getSurname());
+        user.setAboutMe(userProfileDTO.getAboutMe());
+        user.setTwitter(userProfileDTO.getTwitter());
+        user.setInstagram(userProfileDTO.getInstagram());
+        user.setJob(userProfileDTO.getJob());
+        userRepository.save(user);
     }
 }

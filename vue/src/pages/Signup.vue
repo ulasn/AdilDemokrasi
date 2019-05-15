@@ -1,6 +1,6 @@
 <template>
   <div class="page-header clear-filter" filter-color="orange">
-    <div class="page-header-image" style="background-image: url('img/login.jpg')"></div>
+    <div class="page-header-image" style="background-image: url('img/signup.jpg')"></div>
     <div class="content">
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
@@ -8,7 +8,7 @@
             title="Kayıt Başarılı."
             type="success"
             :closable=false
-            description="Kaydınız başarıyla yapılmıştır. Giriş yap sayfasından giriş yapabilirsiniz."
+            description="Kaydınız başarıyla yapılmıştır. Giriş Yap sayfasından giriş yapabilirsiniz."
             v-if="successLogin"
             effect="dark"
             show-icon
@@ -22,6 +22,8 @@
               addon-left-icon="now-ui-icons users_circle-08"
               placeholder="Kullanıcı Adı"
               v-model="user.username"
+              v-on:keyup.enter="onSubmit"
+              autocomplete="off"
             ></fg-input>
 
             <fg-input
@@ -32,6 +34,8 @@
               addon-left-icon="now-ui-icons users_circle-08"
               placeholder="İsim"
               v-model="user.name"
+              v-on:keyup.enter="onSubmit"
+              autocomplete="off"
             ></fg-input>
 
             <fg-input
@@ -42,6 +46,8 @@
               addon-left-icon="now-ui-icons text_caps-small"
               placeholder="Soyisim"
               v-model="user.surname"
+              v-on:keyup.enter="onSubmit"
+              autocomplete="off"
             ></fg-input>
 
              
@@ -54,6 +60,8 @@
               addon-left-icon="now-ui-icons ui-1_email-85"
               placeholder="E-posta Adresi"
               v-model="user.email"
+              v-on:keyup.enter="onSubmit"
+              autocomplete="off"
             >
             </fg-input>
             
@@ -69,6 +77,8 @@
               addon-left-icon="now-ui-icons ui-1_lock-circle-open"
               placeholder="Şifre"
               v-model="user.password"
+              v-on:keyup.enter="onSubmit"
+              autocomplete="off"
             ></fg-input>
 
             <fg-input
@@ -79,6 +89,8 @@
               addon-left-icon="now-ui-icons ui-1_lock-circle-open"
               placeholder="Şifre Tekrar"
               v-model="passwordAgain"
+              v-on:keyup.enter="onSubmit"
+              autocomplete="off"
             ></fg-input>
 
             <el-alert
@@ -148,7 +160,7 @@ export default {
       failLogin: false,
       cardShow: true,
       passwordMatch:false,
-      description:"Kayıt Yapılamadı. Farklı bir kullanıcı adı deneyin."
+      description:''
     };
   },
   methods: {
@@ -232,14 +244,22 @@ export default {
 
       if (checkSubmit) {
         let response = Actions.addUser(this.user).then(response => {
-          if (response) {
+          if (response.status == 200) {
             this.successLogin = true;
             this.cardShow = false;
-          } else {
+          } else if(response.response.data.message == "Username Already Exists"){
             this.failLogin = true;
+            this.description = "Kullanıcı adı kullanılmaktadır."
+          }
+          else if(response.response.data.message == "Email Already Exists"){
+            this.failLogin = true;
+            this.description = "Bu E-postaya ait başka bir kullanıcı bulunmaktadır."
+          }
+          else{
+            this.failLogin = true;
+            this.description = "Bilinmeyen Hata. Lütfen tekrar deneyiniz."
           }
         });
-        response = response;
       }
     }
   }
@@ -248,9 +268,13 @@ export default {
 <style scoped>
 .login-page .card-login .input-group:last-child {
   margin-bottom: 5px;
-}
+} 
 .input-group,
 .form-group {
   margin-bottom: 1px;
+}
+
+.el-input___inner:active{
+  background-color:rgba(255,255,3, 1)!important;
 }
 </style>

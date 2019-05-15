@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="page-header clear-filter" filter-color="orange">
+    <div class="page-header clear-filter page-header-small" filter-color="orange">
       <parallax class="page-header-image" style="background-image:url('img/demokrasi-eller.jpg')"></parallax>
       <div class="container">
-        <div class="content-center brand">
+        <div class="content-center brand" style="top:45%">
           <img style="width:35%;" src="img/logo_transparent.png" alt>
           <h1 class="title">Adil Demokrasi</h1>
           <h3>Yerel Yönetimler ve Sivil Toplum Kuruluşları için interaktif platform</h3>
@@ -68,56 +68,42 @@
                   en uygun kamu idaresi birimleri olarak görülmektedir
                 </p>
               </div>
+              
             </div>
+            
           </div>
           <div class="section-story-overview">
           <div class="row">
             <div class="col-md-5">
-              <h3>Sivil Toplum Kuruluşları ve Yerel Yönetimlerdeki Temel Methodoloji</h3>
+              <h3>Sivil Toplum Kuruluşları ve Yerel Yönetimlerdeki Methodoloji</h3>
               <p>
                 Kamusal katılım çeşitli biçimlerde, en temelden en gelişkine çeşitli araçların kullanımıyla
                 gerçekleştirilebilir. Hangi yöntemin ve hangi aracın kullanılacağı konusundaki tercih, eldeki
                 konuya bağlı olacaktır. Kamusal katılımı yapılandırmak için çoğu zaman ‘‘katılım merdiveni’’
                 adı verilen yöntem kullanılır
-              </p>
+                <br><br>
+                Kamusal katılım, vatandaşlarla iletişim anlamına gelir. Bunun muhatabı bireysel vatandaşlar
+olabileceği gibi, sendikalar, STK’lar, özel sektör, yaşlılar, kadınlar, gençler ve engelliler gibi belli
+hedef gruplar da olabilir. Yönetimin hangi grup veya temsilcilerle iletişim kurmayı seçeceği,
+sivil toplumun etkinlik gücüne bağlıdır. Çoğu zaman sade vatandaşlar, kamusal katılımda yer
+alma olanağından yoksundur. Bu durumlarda, onları temsil edecek STK’lar bulmak gereklidir. 
+              </p>  
 
+             
               <!-- <div class="image-container image-left" style="background-image: url('img/katılım.png')"></div> -->
             </div>
-            <div class="image-container image-right" style="background-image: url('img/katılım.png')"></div>
+            <div class="col-md-5" style="margin-top:0px; margin-left:100px">
+               <!-- <div class="image-container image-right" style="background-image: url('img/katilim.png');"></div> -->
+               <img src="img/katilim.png" height="335">
+            </div>
           </div>
           </div>
         </div>
       </div>
     </div>
 
-
-    <basic-elements></basic-elements>
-    <navigation></navigation>
-    <tabs-section></tabs-section>
-    <progress-pagination></progress-pagination>
-    <notifications></notifications>
-    <typography></typography>
-    <javascript-components></javascript-components>
-    <carousel-section></carousel-section>
-    <nucleo-icons-section></nucleo-icons-section>
-    <div class="section">
-      <div class="container text-center">
-        <div class="row justify-content-md-center">
-          <div class="col-md-12 col-lg-8">
-            <h2 class="title">Completed with examples</h2>
-            <h5 class="description">
-              The kit comes with three pre-built pages to help you get started
-              faster. You can change the text and images and you're good to go.
-              More importantly, looking at them will give you a picture of what
-              you can built with this powerful Bootstrap 4 ui kit.
-            </h5>
-          </div>
-        </div>
-      </div>
-    </div>
-    <signup-form></signup-form>
-    <examples-section></examples-section>
-    <download-section></download-section>
+    <SignupForm></SignupForm>
+    
   </div>
 
   
@@ -157,4 +143,13 @@ export default {
   }
 };
 </script>
-<style></style>
+<style scoped>
+
+.page-header.page-header-small{
+  min-height: 80vh;
+}
+
+p{
+  font-weight:400;
+}
+</style>

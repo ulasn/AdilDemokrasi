@@ -34,6 +34,8 @@ public class User extends BaseCreation {
 
     private String aboutMe;
 
+    private String job;
+
     private boolean active;
 
     private boolean deleted;
@@ -176,6 +178,14 @@ public class User extends BaseCreation {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
 
     public List<Comment> getComments() {
