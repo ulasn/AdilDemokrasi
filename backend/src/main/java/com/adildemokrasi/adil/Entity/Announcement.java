@@ -22,6 +22,9 @@ public class Announcement extends BaseCreation {
 
     private String post;
 
+    @ManyToOne
+    private NGO ngo;
+
     @OneToMany(mappedBy = "announcement")
     private List<Comment> comments;
 
@@ -39,6 +42,15 @@ public class Announcement extends BaseCreation {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+
+    public NGO getNgo() {
+        return ngo;
+    }
+
+    public void setNgo(NGO ngo) {
+        this.ngo = ngo;
     }
 
     public String getTitle() {

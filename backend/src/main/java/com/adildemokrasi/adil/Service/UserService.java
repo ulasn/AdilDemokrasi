@@ -208,7 +208,7 @@ public class UserService {
     }
 
     public SearchResultDTO getSearchResults(String searchQuery){
-        List<User> users = userRepository.findByNameIgnoreCaseContainingOrSurnameIgnoreCaseContainingOrUsernameIgnoreCaseContaining(searchQuery,searchQuery,searchQuery);
+        List<User> users = userRepository.findByNameIgnoreCaseStartingWithOrSurnameIgnoreCaseStartingWithOrUsernameIgnoreCaseStartingWith(searchQuery,searchQuery,searchQuery);
         int index = 0;
         SearchResultDTO searchResultDTO = new SearchResultDTO();
         List<UserDTO> userDTOList = new ArrayList<>();

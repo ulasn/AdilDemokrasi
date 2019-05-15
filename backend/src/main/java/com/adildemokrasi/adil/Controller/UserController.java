@@ -24,13 +24,6 @@ public class UserController {
     @Autowired
     private AnnouncementService announcementService;
 
-    @RequestMapping(path="/demo", method = RequestMethod.GET)
-    public @ResponseBody Long deneme()
-    {
-        return 1L;
-    }
-
-
     @RequestMapping(path="/new/event", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody void newEvent(@RequestBody EventRequestDTO eventRequestDTO) throws Exception{

@@ -30,6 +30,9 @@ public class Event extends BaseCreation {
     @JoinColumn
     private Address address;
 
+    @ManyToOne
+    private NGO ngo;
+
     private String date;
 
     private boolean deleted;
@@ -68,6 +71,14 @@ public class Event extends BaseCreation {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public NGO getNgo() {
+        return ngo;
+    }
+
+    public void setNgo(NGO ngo) {
+        this.ngo = ngo;
     }
 
     public boolean isDeleted() {

@@ -38,6 +38,9 @@ public class User extends BaseCreation {
 
     private boolean active;
 
+    @ManyToMany(mappedBy = "userList")
+    private Set<NGO> followedNgoList;
+
     private boolean deleted;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
@@ -154,6 +157,14 @@ public class User extends BaseCreation {
 
     public void setTwitter(String twitter) {
         this.twitter = twitter;
+    }
+
+    public Set<NGO> getFollowedNgoList() {
+        return followedNgoList;
+    }
+
+    public void setFollowedNgoList(Set<NGO> followedNgoList) {
+        this.followedNgoList = followedNgoList;
     }
 
     public String getInstagram() {

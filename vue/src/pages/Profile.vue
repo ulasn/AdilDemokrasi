@@ -284,7 +284,7 @@ export default {
       eventExist: false,
       announcementExist: false,
       eventNotExistMessage:
-        "Bu hesabın bağlı olduğu bir etkinlik bulunmamaktır.",
+        "Bu hesabın bağlı olduğu bir etkinlik bulunmamaktadır.",
       announcementNotExistMessage:
         "Bu hesabın paylaştığı bir duyuru bulunmamaktadır."
     };
@@ -316,7 +316,6 @@ export default {
     },
 
     coverImage(){
-      debugger
       let randomNumber = Math.floor(Math.random() * 5) + 1  
       let link = "background-image:url('img/cover/"+ randomNumber + ".jpg')"
       this.coverLink = link
@@ -448,5 +447,9 @@ ul {
 
 .card{
   min-height: 550px;
+}
+
+.description, .card-description, .footer-big p{
+  font-weight:400;
 }
 </style>
