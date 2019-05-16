@@ -126,6 +126,23 @@ export default {
       .catch(function(response) {
         return false;
       });
+  },
+
+  addGroup(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("ngo/add", data, config)
+      .then(response => {
+          return response
+      })
+      .catch(response => {
+          return response
+      })
+    
   }
 };
 

@@ -29,11 +29,80 @@
         <div class="button-container">
           <n-button
             v-if="ownUser"
-            @click.native="modals.classic = true"
+            type="primary"
+            class="btn btn-primary btn-round btn-lg"
+            @click.native="eventModal.classic = true"
+          >Yeni Etkinlik</n-button>
+
+          <!-- Modal For New Event Start -->
+          <modal :show.sync="eventModal.classic" headerClasses="justify-content-center">
+            <h4 slot="header" class="title title-up" style="color:black;">Etkİnlİk</h4>
+            <el-form :model="event" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+              <div slot="default" class="container">
+                <div class="block">
+                  <label for="event">Etkinlik Adı</label>
+                  <el-form-item prop="title">
+                    <el-input
+                      name="event"
+                      type="input"
+                      placeholder="Kısa, net bir ad ekleyin"
+                      v-model="event.title"
+                    ></el-input>
+                  </el-form-item>
+
+                  <label for="content">Tanım</label>
+                  <el-form-item prop="content">
+                    <el-input
+                      name="content"
+                      native.label="Etkinliğinizle ilgili daha fazla bilgi verin"
+                      type="textarea"
+                      :autosize="{ minRows: 4, maxRows: 4}"
+                      placeholder="Tanım"
+                      v-model="event.content"
+                    ></el-input>
+                  </el-form-item>
+
+                  <label for="location">Lokasyon</label>
+                  <div class="ui-front">
+                    <vue-google-autocomplete
+                      name="location"
+                      id="map"
+                      ref="address"
+                      class="autocomplete form-control"
+                      placeholder="Yazmaya Başlayın"
+                      v-on:placechanged="getAddressData"
+                      country="tr"
+                      style="width:140%"
+                    ></vue-google-autocomplete>
+                  </div>
+
+                  <label for="date">Tarih/Saat</label>
+                  <el-date-picker
+                    name="date"
+                    v-model="event.date"
+                    type="datetime"
+                    placeholder="Tarih ve Saat Seçin"
+                    style="width:125%"
+                  ></el-date-picker>
+                </div>
+              </div>
+            </el-form>
+
+            <template slot="footer">
+              <n-button type="danger" @click.native="eventModal.classic = false">Kapat</n-button>
+              <n-button @click="shareEvent">Paylaş</n-button>
+            </template>
+          </modal>
+          <!-- Modal For New Event End -->
+
+          <!-- Modal For New Announcement Start -->
+          <n-button
+            v-if="ownUser"
+            @click.native="announceModal.classic = true"
             class="btn btn-primary btn-round btn-lg"
           >Yeni Duyuru</n-button>
 
-          <modal :show.sync="modals.classic" headerClasses="justify-content-center">
+          <modal :show.sync="announceModal.classic" headerClasses="justify-content-center">
             <h4 slot="header" class="title title-up" style="color:black;">Duyuru</h4>
             <el-form :model="announcement" :rules="rules" ref="ruleForm" class="demo-ruleForm">
               <div slot="default" class="container">
@@ -45,6 +114,7 @@
                       type="input"
                       placeholder="Duyuru Başlığını Ekleyin"
                       v-model="announcement.title"
+                      style="width:170%"
                     ></el-input>
                   </el-form-item>
 
@@ -53,9 +123,10 @@
                     <el-input
                       name="content"
                       type="textarea"
-                      :autosize="{ minRows: 4, maxRows: 4}"
+                      :autosize="{ minRows: 6, maxRows: 6}"
                       placeholder="Duyurunuzun Detaylarını Ekleyin"
                       v-model="announcement.post"
+                      style="width:170%"
                     ></el-input>
                   </el-form-item>
                 </div>
@@ -63,10 +134,11 @@
             </el-form>
 
             <template slot="footer">
-              <n-button type="danger" @click.native="modals.classic = false">Kapat</n-button>
+              <n-button type="danger" @click.native="announceModal.classic = false">Kapat</n-button>
               <n-button @click="shareAnnouncement">Paylaş</n-button>
             </template>
           </modal>
+          <!-- Modal For New Announcement End -->
 
           <a
             v-if="profile.twitter != null"
@@ -216,6 +288,7 @@
 import { Tabs, TabPane, Card, Modal, Button } from "@/components";
 import TabsSection from "./components/Tabs";
 import Actions from "../Request/actions.js";
+import VueGoogleAutocomplete from "vue-google-autocomplete";
 
 export default {
   name: "profile",
@@ -226,18 +299,20 @@ export default {
     TabsSection,
     Card,
     Modal,
-    [Button.name]: Button
+    [Button.name]: Button,
+    VueGoogleAutocomplete
   },
   watch: {
     $route(to, from) {
-      this.onRefresh()
+      this.onRefresh();
     }
   },
-  beforeMount(){
+  beforeMount() {
     this.coverImage();
   },
 
   mounted() {
+    this.$refs.address.focus();
     this.username = this.$route.params.username;
     if (this.username === undefined) {
       this.username = "";
@@ -249,7 +324,8 @@ export default {
   data() {
     return {
       username: "",
-      coverLink:"",
+      coverLink: "",
+      address: "",
       profile: {
         username: "",
         name: "",
@@ -264,6 +340,17 @@ export default {
         announcementCount: "",
         commentCount: ""
       },
+      event: {
+        title: "",
+        content: "",
+        location: "",
+        date: "",
+        address: {
+          route: "",
+          latitude: "",
+          longitude: ""
+        }
+      },
       settings: {
         name: "",
         surname: "",
@@ -276,17 +363,48 @@ export default {
         title: "",
         post: ""
       },
-      modals: {
+      eventModal: {
+        classic: false
+      },
+      announceModal: {
         classic: false
       },
       ownUser: false,
-      rules: {},
+
       eventExist: false,
       announcementExist: false,
       eventNotExistMessage:
         "Bu hesabın bağlı olduğu bir etkinlik bulunmamaktadır.",
       announcementNotExistMessage:
-        "Bu hesabın paylaştığı bir duyuru bulunmamaktadır."
+        "Bu hesabın paylaştığı bir duyuru bulunmamaktadır.",
+      rules: {
+        title: [
+          {
+            required: true,
+            message: "Lütfen Etkinlik Adını Giriniz.",
+            trigger: "blur"
+          },
+          {
+            min: 3,
+            max: 64,
+            message:
+              "3 Karakterden daha çok, 64 Karakterden daha fazla olamaz.",
+            trigger: "blur"
+          }
+        ],
+        content: [
+          {
+            required: true,
+            message: "Lütfen Etkinlik Açıklaması Giriniz.",
+            trigger: "blur"
+          },
+          {
+            max: 10000,
+            message: "10000 karakterden daha uzun olamaz.",
+            trigger: "blur"
+          }
+        ]
+      }
     };
   },
   methods: {
@@ -315,10 +433,10 @@ export default {
       });
     },
 
-    coverImage(){
-      let randomNumber = Math.floor(Math.random() * 5) + 1  
-      let link = "background-image:url('img/cover/"+ randomNumber + ".jpg')"
-      this.coverLink = link
+    coverImage() {
+      let randomNumber = Math.floor(Math.random() * 5) + 1;
+      let link = "background-image:url('img/cover/" + randomNumber + ".jpg')";
+      this.coverLink = link;
     },
 
     events() {
@@ -372,18 +490,16 @@ export default {
       this.aboutExist();
     },
 
-    saveSettings(){
-        Actions.saveSettings(this.settings)
-          .then(response => {
-            if(response){
-              this.$alert('Ayarlarınız başarıyla kaydedilmiştir.')
-              this.onRefresh()
-            }
-            else{
-              this.$alert('Beklenmeyen bir hata oldu lütfen tekrar deneyin.')
-              this.onRefresh()
-            }
-          })
+    saveSettings() {
+      Actions.saveSettings(this.settings).then(response => {
+        if (response) {
+          this.$alert("Ayarlarınız başarıyla kaydedilmiştir.");
+          this.onRefresh();
+        } else {
+          this.$alert("Beklenmeyen bir hata oldu lütfen tekrar deneyin.");
+          this.onRefresh();
+        }
+      });
     },
 
     cleanAnnouncementObject() {
@@ -399,14 +515,68 @@ export default {
       };
       Actions.shareAnnouncement(announcementRequest).then(response => {
         if (response) {
-          this.modals.classic = false;
+          this.announceModal.classic = false;
           this.$alert("Duyuru başarıyla paylaşılmıştır.");
           this.cleanAnnouncementObject();
           this.$router.push("/profile");
         } else {
-          this.modals.classic = false;
+          this.announceModal.classic = false;
           this.event = returnCleanEventObject();
           this.$alert("Beklenmedik bir hata oluştu, lütfen tekrar deneyin.");
+        }
+      });
+    },
+
+    getAddressData(addressData, placeResultData, id) {
+      debugger;
+      this.event.address.route = addressData.route;
+      this.event.address.latitude = addressData.latitude;
+      this.event.address.longitude = addressData.longitude;
+    },
+
+    returnCleanEventObject() {
+      let event = {
+        title: "",
+        content: "",
+        location: "",
+        date: "",
+        address: {
+          route: "",
+          latitude: "",
+          longitude: ""
+        }
+      };
+
+      return event;
+    },
+    shareEvent() {
+      this.$refs["ruleForm"].validate(valid => {
+        if (valid) {
+          let eventRequest = {
+            title: this.event.title,
+            content: this.event.content,
+            username: localStorage.getItem("username"),
+            location: this.event.location,
+            date: this.event.date,
+            address: this.event.address
+          };
+          Actions.shareEvent(eventRequest).then(response => {
+            if (response) {
+              this.eventModal.classic = false;
+              this.$alert("Etkinlik başarıyla kaydedilmiştir.");
+              this.event = this.returnCleanEventObject();
+              this.$refs.address.clear();
+              this.$router.push("/");
+            } else {
+              this.eventModal.classic = false;
+              this.event = returnCleanEventObject();
+              this.$alert(
+                "Beklenmedik bir hata oluştu, lütfen tekrar deneyin."
+              );
+            }
+          });
+        } else {
+          return false;
         }
       });
     }
@@ -445,11 +615,33 @@ ul {
   float: right;
 }
 
-.card{
+.card {
   min-height: 550px;
 }
 
-.description, .card-description, .footer-big p{
-  font-weight:400;
+.description,
+.card-description,
+.footer-big p {
+  font-weight: 400;
+}
+
+.block {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 10px;
+}
+
+.block label {
+  text-align: right;
+  color: black;
+  margin-top: 5px;
+}
+
+.block .el-input {
+  width: 140%;
+}
+
+.block .el-textarea {
+  width: 140%;
 }
 </style>
