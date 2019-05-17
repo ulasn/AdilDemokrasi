@@ -22,24 +22,7 @@
               Bu sayfadan sisteme kayıtlı olan kurumlara ulaşabilirsiniz.
             </h5>
             <ul>
-              <li>
-                LÖSEV-Lösemili Çocuklar Vakfı
-              </li>
-
-              <li>
-                Mor Çatı Kadın Sığınağı Vakfı
-
-              </li>
-
-              <li>
-                TOG- Toplum Gönüllüleri Vakfı
-
-              </li>
-
-              <li>
-                TEGV- Türkiye Eğitim Gönüllüleri Vakfı
-
-              </li>
+              
             </ul>
           </div>
         </div>

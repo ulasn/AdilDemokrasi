@@ -9,6 +9,7 @@ import MainFooter from "./layout/MainFooter.vue";
 import Signup from "./pages/Signup.vue";
 import Organization from "./pages/Organization.vue"
 import About from "./pages/About.vue"
+import Group from "./pages/Group.vue"
 
 Vue.use(Router);
 
@@ -69,6 +70,16 @@ export default new Router({
       beforeEnter: guard,
       name: "profile",
       components: { default: Profile, header: MainNavbar, footer: MainFooter },
+      props: {
+        header: { colorOnScroll: 400 },
+        footer: { backgroundColor: "black" }
+      }
+    },
+    {
+      path: "/group/:groupname",
+      beforeEnter: guard,
+      name: "groupParam",
+      components: { default: Group, header: MainNavbar, footer: MainFooter },
       props: {
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: "black" }

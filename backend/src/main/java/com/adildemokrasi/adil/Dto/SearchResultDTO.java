@@ -1,16 +1,21 @@
 package com.adildemokrasi.adil.Dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultDTO {
 
-    private List<UserDTO> filteredUserList;
+    private List<SearchResultElementDTO> searchElements = new ArrayList<>();
 
-    public List<UserDTO> getFilteredUserList() {
-        return filteredUserList;
+    public List<SearchResultElementDTO> getSearchElements() {
+        return searchElements;
     }
 
-    public void setFilteredUserList(List<UserDTO> filteredUserList) {
-        this.filteredUserList = filteredUserList;
+    public void setSearchElements(List<SearchResultElementDTO> searchElements) {
+        this.searchElements = searchElements;
+    }
+
+    public void addElement(SearchResultElementDTO elementDTO){
+        this.searchElements.add(elementDTO);
     }
 }

@@ -34,11 +34,7 @@
       <div style="padding:5px"></div>
 
       <li class="nav-item" v-if="isLogged === true">
-        <n-button
-          type="primary"
-          class="nav-link"
-          @click="openModal"
-        >Grup Oluştur</n-button>
+        <n-button type="primary" class="nav-link" @click="openModal">Grup Oluştur</n-button>
       </li>
 
       <div style="padding:5px"></div>
@@ -56,7 +52,12 @@
           placeholder="Arama"
           :trigger-on-focus="false"
           @select="handleSelect"
-        ></el-autocomplete>
+        >
+          <template slot-scope="{ item }">
+            <div class="value">{{ item.name }} <span class="tag">{{ item.tag }}</span></div>
+            
+          </template>
+        </el-autocomplete>
       </li>
 
       <li class="nav-item">
@@ -117,7 +118,6 @@ import { Popover } from "element-ui";
 import { bus } from "../main";
 import Actions from "../Request/actions.js";
 
-
 export default {
   name: "main-navbar",
   props: {
@@ -144,9 +144,7 @@ export default {
       timeout: ""
     };
   },
-  mounted() {
-
-  },
+  mounted() {},
   created() {
     bus.$on("logged", () => {
       this.isLogged = this.checkIfIsLogged();
@@ -166,28 +164,39 @@ export default {
       if (queryString != "") {
         Actions.searchUser(queryString)
           .then(response => {
-            results = response.data.filteredUserList;
+            results = response.data.searchElements;
 
-            var usernames = []
-            results.forEach(function(user){
-              usernames.push({value: user.username})
-            })
+            // var names = [];
+            // results.forEach(function(user) {
+            //   names.push({ value: user.name });
+            // });
 
             clearTimeout(this.timeout);
             this.timeout = setTimeout(() => {
-              cb(usernames);
+              cb(results);
             }, 3000 * Math.random());
           })
-          .catch(response => {
-          });
+          .catch(response => {});
       }
     },
 
     handleSelect(item) {
-        this.$router.push({name:'profileParam', params:{username: item.value}})
+      if(item.tag == "Kişi"){
+        this.$router.push({
+        name: "profileParam",
+        params: { groupname: item.name }
+      });
+      }
+      
+      if(item.tag == "Grup"){
+        this.$router.push({
+        name: "groupParam",
+        params: { groupname: item.name }
+      })
+      }
     },
 
-    openModal(){
+    openModal() {
       bus.$emit("groupModal", "open");
     },
 
@@ -220,7 +229,7 @@ export default {
 }
 
 .el-input {
-  width:100%;
+  width: 100%;
 }
 
 b {
@@ -228,6 +237,16 @@ b {
 }
 .navbar .navbar-nav .nav-link.btn {
   margin-top: 2px;
-  padding:11px 20px;
+  padding: 11px 20px;
+}
+
+.modal-content{
+  width:140%;
+}
+
+.tag{
+  font-size:10px;
+  display: inline-block;
+  float: right;
 }
 </style>

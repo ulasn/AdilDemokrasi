@@ -32,6 +32,7 @@ public class User extends BaseCreation {
 
     private String instagram;
 
+    @Column(length = 2000)
     private String aboutMe;
 
     private String job;

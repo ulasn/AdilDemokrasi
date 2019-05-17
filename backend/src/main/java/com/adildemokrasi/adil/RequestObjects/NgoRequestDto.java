@@ -8,6 +8,12 @@ public class NgoRequestDto {
 
     private String admin;
 
+    private String tag;
+
+    private String twitter;
+
+    private String instagram;
+
     public String getName() {
         return name;
     }
@@ -22,6 +28,30 @@ public class NgoRequestDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getAdmin() {

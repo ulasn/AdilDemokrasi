@@ -173,7 +173,7 @@
           <div class="row">
             <div class="col-md-10 ml-auto col-xl-10 mr-auto">
               <!-- Nav tabs -->
-              <card name="card">
+              <card name="card" class="maincard">
                 <tabs slot="raw-content" tab-content-classes="tab-content-padding text-center">
                   <tab-pane>
                     <template slot="label">
@@ -189,10 +189,12 @@
                       <li v-for="event in profile.events" :key="event.title">
                         <card class="customCard" style="width: 20rem;">
                           <div>
-                            <h4 class="card-title">{{event.title}}</h4>
-                            <p class="card-text">{{event.content}}</p>
+                            <h4 class="card-title"><b>Etkinlik:</b> {{event.title}}</h4><br>
+                            <p class="card-text"><b>İçeriği:</b> {{event.content}}
+                                        <br><br><b>Nerede: </b> {{event.address.route}}
+                                         <br><br><b>Ne Zaman: </b>{{event.date}}</p>
 
-                            <n-button type="primary">Detaylar</n-button>
+                            <n-button type="primary">Katıl</n-button>
                           </div>
                         </card>
                       </li>
@@ -207,10 +209,9 @@
                       <li v-for="announcement in profile.announcements" :key="announcement.title">
                         <card class="customCard" style="width: 20rem;">
                           <div>
-                            <h4 class="card-title">{{announcement.title}}</h4>
-                            <p class="card-text">{{announcement.post}}</p>
+                            <h4 class="card-title"><b>Duyuru:</b> {{announcement.title}}</h4><br>
+                            <p class="card-text"><b>İçeriği:</b> {{announcement.post}}</p>
 
-                            <n-button type="primary">Detaylar</n-button>
                           </div>
                         </card>
                       </li>
@@ -394,11 +395,6 @@ export default {
         ],
         content: [
           {
-            required: true,
-            message: "Lütfen Etkinlik Açıklaması Giriniz.",
-            trigger: "blur"
-          },
-          {
             max: 10000,
             message: "10000 karakterden daha uzun olamaz.",
             trigger: "blur"
@@ -518,7 +514,7 @@ export default {
           this.announceModal.classic = false;
           this.$alert("Duyuru başarıyla paylaşılmıştır.");
           this.cleanAnnouncementObject();
-          this.$router.push("/profile");
+          this.onRefresh();
         } else {
           this.announceModal.classic = false;
           this.event = returnCleanEventObject();
@@ -566,7 +562,7 @@ export default {
               this.$alert("Etkinlik başarıyla kaydedilmiştir.");
               this.event = this.returnCleanEventObject();
               this.$refs.address.clear();
-              this.$router.push("/");
+              this.onRefresh();
             } else {
               this.eventModal.classic = false;
               this.event = returnCleanEventObject();
@@ -590,6 +586,7 @@ ul {
 
 .customCard {
   text-align: left;
+  min-width:80%;
 }
 
 .giveSpace {
@@ -615,7 +612,7 @@ ul {
   float: right;
 }
 
-.card {
+.maincard {
   min-height: 550px;
 }
 

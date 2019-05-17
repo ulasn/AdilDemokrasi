@@ -8,6 +8,7 @@ Axios.interceptors.response.use(response => {
 }, error => {
  if (error.response.status === 401) {
     localStorage.removeItem("access_token");
+    bus.$emit("logged", "User logged out");
     localStorage.logged = false;
     this.$router.push('/login')
  }
@@ -60,6 +61,26 @@ export default {
       });
   },
 
+  getGroupProfileData(name){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      },
+      params:{
+        name: name
+      }
+    };
+
+    return Axios.get("ngo/get/profile", config)
+      .then(function(response) {
+        return response;
+      })
+      .catch(error => {
+        let errorObject=JSON.parse(JSON.stringify(error));
+        console.log(errorObject);
+      });
+  },
+
   shareAnnouncement(data){
     var config = {
       headers: {
@@ -76,6 +97,22 @@ export default {
       });
   },
 
+  shareGroupAnnouncement(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("ngo/new/announcement", data, config)
+      .then(function(response) {
+        return true
+      })
+      .catch(function(response) {
+        return false;
+      });
+  },
+
   shareEvent(data) {
     var config = {
       headers: {
@@ -84,6 +121,23 @@ export default {
     };
 
     return Axios.post("user/new/event", data, config)
+      .then(function(response) {
+        debugger
+        return true
+      })
+      .catch(function(response) {
+        return false;
+      });
+  },
+
+  shareGroupEvent(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("ngo/new/event", data, config)
       .then(function(response) {
         return true
       })
@@ -120,6 +174,22 @@ export default {
     };
 
     return Axios.post("user/settings", data, config)
+      .then(function(response) {
+        return true
+      })
+      .catch(function(response) {
+        return false;
+      });
+  },
+
+  saveGroupSettings(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("ngo/settings", data, config)
       .then(function(response) {
         return true
       })

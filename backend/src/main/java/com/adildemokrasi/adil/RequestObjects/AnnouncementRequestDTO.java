@@ -4,6 +4,7 @@ public class AnnouncementRequestDTO {
     private String username;
     private String post;
     private String title;
+    private String group;
 
     public AnnouncementRequestDTO() {
     }
@@ -36,5 +37,13 @@ public class AnnouncementRequestDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 }

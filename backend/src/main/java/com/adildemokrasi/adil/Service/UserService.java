@@ -1,11 +1,9 @@
 package com.adildemokrasi.adil.Service;
 
 import com.adildemokrasi.adil.Dto.*;
-import com.adildemokrasi.adil.Entity.Announcement;
-import com.adildemokrasi.adil.Entity.Event;
-import com.adildemokrasi.adil.Entity.Role;
-import com.adildemokrasi.adil.Entity.User;
+import com.adildemokrasi.adil.Entity.*;
 import com.adildemokrasi.adil.Enum.Status;
+import com.adildemokrasi.adil.Repository.NgoRepository;
 import com.adildemokrasi.adil.Repository.UserRepository;
 import com.adildemokrasi.adil.RequestObjects.UserRequestDto;
 import org.modelmapper.ModelMapper;
@@ -26,7 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
-
+@SuppressWarnings("Duplicates")
 @Service
 public class UserService {
 
@@ -44,6 +42,9 @@ public class UserService {
 
     @Autowired
     private TokenEndpoint tokenEndpoint;
+
+    @Autowired
+    private NgoRepository ngoRepository;
 
 
     public Long save(User user){
@@ -209,22 +210,26 @@ public class UserService {
 
     public SearchResultDTO getSearchResults(String searchQuery){
         List<User> users = userRepository.findByNameIgnoreCaseStartingWithOrSurnameIgnoreCaseStartingWithOrUsernameIgnoreCaseStartingWith(searchQuery,searchQuery,searchQuery);
-        int index = 0;
+        List<NGO> ngoList = ngoRepository.findByNameIgnoreCaseStartingWith(searchQuery);
+
         SearchResultDTO searchResultDTO = new SearchResultDTO();
-        List<UserDTO> userDTOList = new ArrayList<>();
-        for(User user : users){
-            UserDTO userDTO = new UserDTO();
-            userDTO.setName(user.getName());
-            userDTO.setSurname(user.getSurname());
-            userDTO.setUsername(user.getUsername());
-            userDTOList.add(userDTO);
-            index++;
-            if(index == 5)
-                break;
+
+        Integer index = users.size();
+        index = (index > 4) ? 4 : index;
+        for(int i = 0; i<index; i++){
+            searchResultDTO.addElement(new SearchResultElementDTO(users.get(i).getUsername(), "Kişi"));
         }
-        searchResultDTO.setFilteredUserList(userDTOList);
+
+        index = ngoList.size();
+        index = (index > 4) ? 4 : index;
+        for(int i = 0; i<index; i++){
+            searchResultDTO.addElement(new SearchResultElementDTO(ngoList.get(i).getName(), "Grup"));
+        }
+
         return searchResultDTO;
     }
+
+
 
     public void saveUserSettings(UserProfileDTO userProfileDTO) {
         User user = getCurrentUser();

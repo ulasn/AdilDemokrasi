@@ -6,6 +6,7 @@ public class EventRequestDTO {
     private String title;
     private String content;
     private String username;
+    private String group;
     private String date;
     private Address address;
 
@@ -50,5 +51,13 @@ public class EventRequestDTO {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 }
