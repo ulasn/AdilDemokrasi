@@ -30,6 +30,11 @@ public class Event extends BaseCreation {
     @JoinColumn
     private Address address;
 
+    @OneToMany
+    @JoinTable(name="event_comment", joinColumns = @JoinColumn(name="event_id"),
+            inverseJoinColumns = @JoinColumn(name="comment_id"))
+    private List<Comment> commentList = new ArrayList<>();
+
     @ManyToOne
     private NGO ngo;
 
@@ -124,5 +129,15 @@ public class Event extends BaseCreation {
         }
     }
 
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
 
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
+    public void addComment(Comment comment){
+        this.commentList.add(comment);
+    }
 }

@@ -22,6 +22,8 @@ public class UserProfileDTO {
 
     private List<EventDTO> events;
 
+    private List<CommentDTO> comments;
+
     private Integer eventCount;
 
     private Integer announcementCount;
@@ -122,5 +124,13 @@ public class UserProfileDTO {
 
     public void setCommentCount(Integer commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public List<CommentDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDTO> comments) {
+        this.comments = comments;
     }
 }

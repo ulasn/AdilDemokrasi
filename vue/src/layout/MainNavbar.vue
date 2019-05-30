@@ -184,7 +184,7 @@ export default {
       if(item.tag == "Kişi"){
         this.$router.push({
         name: "profileParam",
-        params: { groupname: item.name }
+        params: { username: item.name }
       });
       }
       

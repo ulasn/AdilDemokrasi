@@ -179,22 +179,219 @@
                     <template slot="label">
                       <i class="now-ui-icons objects_umbrella-13"></i> Ana Sayfa
                     </template>
-                    <p>Ana Sayfa</p>
+                    <ul>
+                      <li v-for="feed in news" :key="feed.time">
+                        <div v-if="feed.type == 'event'" class="feed">
+                          <div class="feed-body">
+                            <p>
+                              {{feed.username }} adlı kullanıcı {{feed.title}} etkinliği düzenledi.
+                              <br>
+                              <b>Etkinlik Detayı:</b>
+                              {{feed.content}}
+                            </p>
+                          </div>
+                          <div class="feed-info">
+                            <i
+                              style="font-size:0.7rem"
+                            >Etkinlik Detayı - {{feed.date}} - {{feed.time}}</i>
+                          </div>
+                        </div>
+
+                        <div v-if="feed.type == 'announcement'" class="feed">
+                          <div class="feed-body">
+                            <p>
+                              {{feed.username }} adlı kullanıcı {{feed.title}} başlıklı yeni bir duyuru yaptı.
+                              <br>
+                              <b>Duyuru Detayı:</b>
+                              {{feed.content}}
+                            </p>
+                          </div>
+                          <div class="feed-info">
+                            <i
+                              style="font-size:0.7rem"
+                            >Duyuru Detayı - {{feed.date}} - {{feed.time}}</i>
+                          </div>
+                        </div>
+
+                        <div v-if="feed.type == 'comment'" class="feed">
+                          <div class="feed-body">
+                            <p>
+                              {{feed.username }} adlı kullanıcı bir yorum yaptı.
+                              <br>
+                              <b>{{feed.title}}</b>
+                              etkinliğinde: {{feed.content}}
+                            </p>
+                          </div>
+                          <div class="feed-info">
+                            <i style="font-size:0.7rem">Yorum Detayı - {{feed.date}} - {{feed.time}}</i>
+                          </div>
+                        </div>
+                        <div class="giveSpace"></div>
+                        <div class="giveSpace"></div>
+
+                      </li>
+                    </ul>
                   </tab-pane>
                   <tab-pane>
                     <template slot="label">
                       <i class="now-ui-icons objects_spaceship"></i> Etkinlikler
                     </template>
                     <ul v-if="eventExist">
-                      <li v-for="event in profile.events" :key="event.title">
+                      <li v-for="event in profile.events" :key="event.time">
                         <card class="customCard" style="width: 20rem;">
                           <div>
-                            <h4 class="card-title"><b>Etkinlik:</b> {{event.title}}</h4><br>
-                            <p class="card-text"><b>İçeriği:</b> {{event.content}}
-                                        <br><br><b>Nerede: </b> {{event.address.route}}
-                                         <br><br><b>Ne Zaman: </b>{{event.date}}</p>
+                            <h4 class="card-title">
+                              <b>Etkinlik:</b>
+                              {{event.title}}
+                            </h4>
+                            <br>
+                            <p class="card-text">
+                              <b>İçeriği:</b>
+                              {{event.content}}
+                              <br>
+                              <br>
+                              <b>Nerede:</b>
+                              {{event.address.route}}
+                              <br>
+                              <br>
+                              <b>Tarih:</b>
+                              {{event.date}}
+                              <br>
+                              <br>
+                              <b>Zaman:</b>
+                              {{event.time}}
+                            </p>
 
-                            <n-button type="primary">Katıl</n-button>
+                            <n-button type="primary" @click="details(event)">Detaylar</n-button>
+                            <modal
+                              id="eventDetail"
+                              :show.sync="eventDetailsModal"
+                              headerClasses="justify-content-center"
+                            >
+                              <h4 slot="header" class="title title-up" style="color:black;">Etkİnlİk</h4>
+                              <div slot="default" class="container">
+                                <p class="card-text">
+                                  <b>Etkinlik:</b>
+                                  {{modalEvent.title}}
+                                  <br>
+                                  <b>İçeriği:</b>
+                                  {{modalEvent.content}}
+                                  <br>
+                                  <b>Nerede:</b>
+                                  {{modalEvent.address.route}}
+                                  <br>
+
+                                  <b>Tarih:</b>
+                                  {{modalEvent.date}}
+                                  <br>
+                                  <b>Zaman:</b>
+                                  {{modalEvent.time}}
+                                </p>
+                                <br>
+
+                                <div class="parentParticipant">
+                                  <div class="addParticipant">
+                                    <h5>
+                                      <b>Katılımcı Ekle</b>
+                                    </h5>
+                                    <el-autocomplete
+                                      style="min-width:300px"
+                                      v-model="newParticipant"
+                                      :fetch-suggestions="querySearchAsync"
+                                      placeholder="Arama"
+                                      :trigger-on-focus="false"
+                                      @select="handleSelect"
+                                    >
+                                      <template slot-scope="{ item }">
+                                        <div class="value">
+                                          {{ item.name }}
+                                          <span class="tag">{{ item.tag }}</span>
+                                        </div>
+                                      </template>
+                                    </el-autocomplete>
+                                    <n-button style="margin-left:20px; min-width:125px; margin-top:5px;" type="danger" @click="addNewEventUser">Ekle</n-button>
+                                  </div>
+                                  <div class="giveSpace"></div>
+                                  
+                                  <div class="participants">
+                                    <card>
+                                      <h5>
+                                        <b>Katılımcılar:</b>
+                                      </h5>
+                                      <ul>
+                                        <li v-for="user in eventUsers" :key="user.username">
+                                          <div class="event-users">
+                                          <div class ="iconWrap"> <img src="img/icon.png" style="width:20px;"></div>
+                                          <div class="users-body">
+                                            <p style="font-size:1rem">{{user.name}} {{user.surname}}</p>
+                                          </div>
+                                          </div>
+                                        </li>
+                                      </ul>
+                                    </card>
+                                  </div>
+                                </div>
+
+                                <div id="comments">
+                                  <br>
+                                  <center>
+                                    <h5>Yorumlar</h5>
+                                    <br>
+                                  </center>
+                                  <p v-if="!commentsExist">
+                                    <center>
+                                      <i>Henüz yorum bulunmamaktadır. İlk yorumu yap.</i>
+                                    </center>
+                                  </p>
+                                  <ul v-if="commentsExist">
+                                    <li v-for="comment in eventComments" :key="comment.time">
+                                      <div class="comment">
+                                        <div class="comment-info">
+                                          <img src="img/icon.png" style="width:50px;">
+                                          <p>
+                                            {{comment.username}}
+                                            <br>
+                                            <i
+                                              style="font-size:0.7em"
+                                            >{{comment.date}} - {{comment.time}}</i>
+                                          </p>
+                                        </div>
+
+                                        <div
+                                          class="comment-body"
+                                          style="font-size:0.9em;background-color:(192,192,192,0.5)"
+                                        >
+                                          <p>{{comment.comment}}</p>
+                                        </div>
+                                      </div>
+                                      <div class="giveSpace"></div>
+                                    </li>
+                                  </ul>
+                                  <br>
+                                  <center>
+                                    <el-input
+                                      name="comment"
+                                      type="textarea"
+                                      :autosize="{ minRows: 3, maxRows: 3}"
+                                      placeholder="Yorum Yapın."
+                                      v-model="newComment"
+                                      style="width:80%"
+                                    ></el-input>
+                                  </center>
+                                  <center>
+                                    <n-button type="default" @click="addComment(newComment)">Gönder</n-button>
+                                  </center>
+                                </div>
+                              </div>
+
+                              <template slot="footer">
+                                <n-button
+                                  type="danger"
+                                  @click.native="eventDetailsModal = false"
+                                >Kapat</n-button>
+                                <n-button @click="participateEvent" v-if="!ownUser">Katıl</n-button>
+                              </template>
+                            </modal>
                           </div>
                         </card>
                       </li>
@@ -207,11 +404,17 @@
                     </template>
                     <ul v-if="announcementExist">
                       <li v-for="announcement in profile.announcements" :key="announcement.title">
-                        <card class="customCard" style="width: 20rem;">
+                        <card class="customCard" style="width: 20rem;min-height:250px">
                           <div>
-                            <h4 class="card-title"><b>Duyuru:</b> {{announcement.title}}</h4><br>
-                            <p class="card-text"><b>İçeriği:</b> {{announcement.post}}</p>
-
+                            <h4 class="card-title">
+                              <b>Duyuru:</b>
+                              {{announcement.title}}
+                            </h4>
+                            <br>
+                            <p class="card-text">
+                              <b>İçeriği:</b>
+                              {{announcement.post}}
+                            </p>
                           </div>
                         </card>
                       </li>
@@ -324,9 +527,12 @@ export default {
   },
   data() {
     return {
+      searchNewParticipant:'',
+      newParticipant:'',
       username: "",
       coverLink: "",
       address: "",
+      news: [],
       profile: {
         username: "",
         name: "",
@@ -335,8 +541,9 @@ export default {
         twitter: "",
         instagram: "",
         aboutMe: "",
-        announcements: {},
-        events: {},
+        announcements: [],
+        events: [],
+        comments: [],
         eventCount: "",
         announcementCount: "",
         commentCount: ""
@@ -352,6 +559,16 @@ export default {
           longitude: ""
         }
       },
+      currentEvent: "",
+      modalEvent: {
+        title: "",
+        content: "",
+        date: "",
+        time: "",
+        address: {
+          route: ""
+        }
+      },
       settings: {
         name: "",
         surname: "",
@@ -364,12 +581,17 @@ export default {
         title: "",
         post: ""
       },
+      eventUsers: [],
+      eventComments: [],
+      newComment: "",
+      commentsExist: false,
       eventModal: {
         classic: false
       },
       announceModal: {
         classic: false
       },
+      eventDetailsModal: false,
       ownUser: false,
 
       eventExist: false,
@@ -435,6 +657,40 @@ export default {
       this.coverLink = link;
     },
 
+    parseCommentDates() {
+      this.eventComments.forEach(function(comment) {
+        comment.time = comment.date.substr(11, 8);
+        comment.date = comment.date.substr(0, 10);
+      });
+    }, //2019-05-30T00:34:28.417Z
+
+    getEventComments(event) {
+      Actions.getEventComments(event.title).then(response => {
+        if (response.data.commentList.length != 0) {
+          this.eventComments = response.data.commentList;
+          this.parseCommentDates();
+          this.commentsExist = true;
+        } else {
+          this.commentsExist = false;
+        }
+      });
+    },
+
+    getEventUsers(event) {
+      var self = this;
+      Actions.getEventUsers(event.title).then(response => {
+        self.eventUsers = response.data.users;
+      });
+    },
+
+    details(event) {
+      this.eventDetailsModal = true;
+      this.modalEvent = event;
+      this.currentEvent = event.title;
+      this.getEventComments(event);
+      this.getEventUsers(event);
+    },
+
     events() {
       if (this.profile.eventCount == 0) {
         this.eventExist = false;
@@ -467,6 +723,69 @@ export default {
       this.settings.twitter = this.profile.twitter;
     },
 
+    getNews() {
+      var newItem = {
+        title: "",
+        content: "",
+        date: "",
+        time: "",
+        type: "",
+        username: ""
+      };
+      var self = this;
+
+      if (self.profile.eventCount != 0) {
+        self.profile.events.forEach(event => {
+          newItem.title = event.title;
+          newItem.content = event.content;
+          newItem.date = event.date.substr(0, 10);
+          newItem.time = event.date.substr(11, 8);
+          newItem.username = event.creator;
+          newItem.type = "event";
+          let temp = JSON.parse(JSON.stringify(newItem));
+          self.news.push(temp);
+        });
+      }
+
+      if (self.profile.announcementCount != 0) {
+        self.profile.announcements.forEach(announcement => {
+          newItem.title = announcement.title;
+          newItem.content = announcement.post;
+          newItem.date = announcement.date.substr(0, 10);
+          newItem.time = announcement.date.substr(11, 8);
+          newItem.username = announcement.username;
+          newItem.type = "announcement";
+          let temp = JSON.parse(JSON.stringify(newItem));
+          self.news.push(temp);
+        });
+      }
+
+      if (self.profile.commentCount != 0) {
+        self.profile.comments.forEach(comment => {
+          newItem.title = "";
+          newItem.content = comment.comment;
+          newItem.date = comment.date.substr(0, 10);
+          newItem.time = comment.date.substr(11, 8);
+          newItem.username = comment.username;
+          newItem.title = comment.event;
+          newItem.type = "comment";
+          let temp = JSON.parse(JSON.stringify(newItem));
+          self.news.push(temp);
+        });
+      }
+
+      self.news.sort(function(a, b) {
+        return new Date(a.time) - new Date(b.time);
+      });
+    },
+
+    parseEventTime() {
+      this.profile.events.forEach(function(event) {
+        event.time = event.date.substr(11, 5);
+        event.date = event.date.substr(0, 10);
+      });
+    }, //2019-05-30T00:34:28.417Z
+
     fillUserProfile(data) {
       this.profile.username = data.username;
       this.profile.name = data.name;
@@ -480,6 +799,9 @@ export default {
       this.profile.eventCount = data.eventCount;
       this.profile.announcementCount = data.announcementCount;
       this.profile.commentCount = data.announcementCount;
+      this.profile.comments = data.comments;
+      this.getNews();
+      this.parseEventTime();
       this.ownUserCheck();
       this.events();
       this.announce();
@@ -524,7 +846,6 @@ export default {
     },
 
     getAddressData(addressData, placeResultData, id) {
-      debugger;
       this.event.address.route = addressData.route;
       this.event.address.latitude = addressData.latitude;
       this.event.address.longitude = addressData.longitude;
@@ -575,6 +896,68 @@ export default {
           return false;
         }
       });
+    },
+
+    addComment(item) {
+      let comment = {
+        comment: item,
+        username: localStorage.getItem("username"),
+        date: new Date(),
+        event: this.currentEvent
+      };
+      let temp = {
+        title: this.currentEvent
+      };
+      Actions.addComment(comment).then(response => {
+        debugger;
+        if (response) {
+          this.$alert("Yorumunuz başarıyla kaydedildi.");
+          this.getEventComments(temp);
+        } else {
+        }
+      });
+
+      this.newComment = "";
+    },
+    querySearchAsync(queryString, cb) {
+      var results;
+      if (queryString != "") {
+        Actions.searchUser(queryString)
+          .then(response => {
+            results = response.data.searchElements;
+
+            // var names = [];
+            // results.forEach(function(user) {
+            //   names.push({ value: user.name });
+            // });
+
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+              cb(results);
+            }, 3000 * Math.random());
+          })
+          .catch(response => {});
+      }
+    },
+    handleSelect(item) {
+      this.newParticipant = item.name;
+    },
+    addNewEventUser(){
+      let newUser ={
+        username: this.newParticipant,
+        event: this.currentEvent
+      };
+      var self = this;
+        Actions.addNewEventUser(newUser)
+              .then(response => {
+                if(response){
+                    this.$alert("Yeni kullanıcı başarıyla eklenmiştir.");
+                    self.getEventUsers(self.currentEvent);
+                }
+                else{
+
+                }
+              })
     }
   }
 };
@@ -586,7 +969,9 @@ ul {
 
 .customCard {
   text-align: left;
-  min-width:80%;
+  min-width: 80%;
+  box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.75);
+  background-color: rgb(225, 225, 225, 0.5);
 }
 
 .giveSpace {
@@ -613,7 +998,7 @@ ul {
 }
 
 .maincard {
-  min-height: 550px;
+  min-height: 750px;
 }
 
 .description,
@@ -640,5 +1025,97 @@ ul {
 
 .block .el-textarea {
   width: 140%;
+}
+
+#eventDetail {
+}
+
+#eventDetail >>> .modal-content {
+  width: 180%;
+  margin-left: -200px;
+  background-color: rgb(250, 250, 250);
+}
+
+.comment {
+  box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
+  min-height: 130px;
+  height: 95%;
+}
+
+.comment-info {
+  float: left;
+  height: 100px;
+  width: 150px;
+  padding-left: 15px;
+  padding-top: 10px;
+}
+
+.comment-body {
+  height: 130px;
+  padding-top: 10px;
+  text-align: left;
+  background-color: rgb(192, 192, 192, 0.3);
+}
+
+.feed {
+  box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
+  min-height: 150px;
+  height: 100%;
+}
+
+.feed-info {
+  float: right;
+  padding: 15px;
+  background-color: rgb(192, 192, 192, 0.2);
+  border-radius: 5px;
+  margin-top: -50px;
+}
+
+.feed-body {
+  height: 150px;
+  width: 100%;
+  padding: 20px;
+  float: left;
+  text-align: left;
+  background-color: rgb(192, 192, 192, 0.15);
+  font-size: 0.9em;
+  background-color: (192, 192, 192, 0.5);
+}
+
+.participants {
+  float: left;
+  width: 55%;
+  min-height: 120px;
+}
+
+.addParticipant {
+  float: left;
+  width: 55%;
+  min-height: 100px;
+}
+
+.parentParticipant {
+  min-height: 250px;
+  width: 100%;
+  overflow:auto;
+}
+
+
+.users-body {
+  float: right;
+  text-align: left;
+  min-width: 330px;
+}
+
+.iconWrap{
+  min-height:50px;
+  max-width:30px; 
+  min-width:20px;
+   float:left;
+}
+
+.event-users{
+  width:100%;
+  min-height:50px; 
 }
 </style>

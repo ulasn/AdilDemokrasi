@@ -14,6 +14,8 @@ public class AnnouncementDTO {
 
     private List<Comment> comments;
 
+    private String date;
+
     public String getUsername() {
         return username;
     }
@@ -44,5 +46,13 @@ public class AnnouncementDTO {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

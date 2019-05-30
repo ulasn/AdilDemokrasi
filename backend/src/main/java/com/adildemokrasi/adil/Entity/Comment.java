@@ -2,7 +2,6 @@ package com.adildemokrasi.adil.Entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Entity
 public class Comment extends BaseCreation{
@@ -13,20 +12,32 @@ public class Comment extends BaseCreation{
     private Integer id;
 
     @NotNull
+    @Column(length = 4000)
     private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="announcement_id")
     private Announcement announcement;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Event event;
+
+
     @NotNull
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
     @NotNull
-    private Date date;
+    private String date;
 
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public Integer getId() {
         return id;
@@ -60,11 +71,11 @@ public class Comment extends BaseCreation{
         this.user = user;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

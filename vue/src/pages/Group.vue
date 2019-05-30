@@ -137,7 +137,7 @@
           <!-- Modal For New Announcement End -->
 
           <a
-            v-if="group.twitter != null"
+            v-if="group.twitter != ''"
             v-bind:href="group.twitter"
             class="btn btn-default btn-round btn-lg btn-icon"
             rel="tooltip"
@@ -147,7 +147,7 @@
             <i class="fab fa-twitter"></i>
           </a>
           <a
-            v-if="group.instagram != null"
+            v-if="group.instagram != ''"
             v-bind:href="group.instagram"
             class="btn btn-default btn-round btn-lg btn-icon"
             rel="tooltip"
@@ -376,9 +376,9 @@ export default {
       eventExist: false,
       announcementExist: false,
       eventNotExistMessage:
-        "Bu hesabın bağlı olduğu bir etkinlik bulunmamaktadır.",
+        "Bu grubun oluşturduğu bir etkinlik olmamaktadır.",
       announcementNotExistMessage:
-        "Bu hesabın paylaştığı bir duyuru bulunmamaktadır.",
+        "Bu grubun paylaştığı bir duyuru bulunmamaktadır.",
       rules: {
         title: [
           {

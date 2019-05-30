@@ -43,5 +43,9 @@ export default {
 .pac-container {
   z-index: 1050;
 }
+
+p{
+  font-weight:unset!important;
+}
 </style>
 

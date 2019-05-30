@@ -156,6 +156,7 @@ public class UserService {
         List<Announcement> announcementList = user.getAnnouncements();
         for(AnnouncementDTO announcement : userProfileDTO.getAnnouncements()){
             announcement.setUsername(announcementList.get(index).getCreator().getUsername());
+            announcement.setDate(announcementList.get(index).getCreatedAt().toString());
             index++;
         }
 
@@ -164,6 +165,13 @@ public class UserService {
         for(EventDTO event : userProfileDTO.getEvents()){
             event.setCreator(eventList.get(index).getCreator().getUsername());
             index++;
+        }
+
+        index = 0;
+        List <Comment> commentList = user.getComments();
+        for(CommentDTO commentDTO : userProfileDTO.getComments()){
+            commentDTO.setUsername(user.getUsername());
+            commentDTO.setComment(commentList.get(index).getComment());
         }
 
         if(user.getEvents().size() == 0){

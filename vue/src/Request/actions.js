@@ -122,7 +122,6 @@ export default {
 
     return Axios.post("user/new/event", data, config)
       .then(function(response) {
-        debugger
         return true
       })
       .catch(function(response) {
@@ -213,7 +212,76 @@ export default {
           return response
       })
     
+  },
+
+  getEventUsers(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token"),
+      },
+      params:{
+        eventname: data
+      }
+    };
+
+    return Axios.get("/event/get/users", config)
+                .then(response => {
+                  return response
+                }).catch(response => {
+                  return response
+                })
+  },
+
+  getEventComments(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token"),
+      },
+      params:{
+        eventname: data
+      }
+    };
+
+    return Axios.get("/event/get/comments", config)
+                .then(response => {
+                  return response
+                }).catch(response => {
+                  return response
+                })
+  },
+
+  addComment(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("event/add/comment", data, config)
+        .then(response => {
+          return response
+        })
+        .catch(response => {
+          return response
+        })
+  },
+
+  addNewEventUser(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.post("event/add/user", data, config)
+        .then(response => {
+          return response
+        })
+        .catch(response => {
+          return response
+        })
   }
+
 };
 
 // retrieveToken(credentials){

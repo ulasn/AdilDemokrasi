@@ -1,19 +1,22 @@
 package com.adildemokrasi.adil.Service;
 
+import com.adildemokrasi.adil.Dto.CommentDTO;
+import com.adildemokrasi.adil.Dto.EventCommentsDTO;
+import com.adildemokrasi.adil.Dto.EventUserListDTO;
+import com.adildemokrasi.adil.Entity.Comment;
 import com.adildemokrasi.adil.Entity.Event;
 import com.adildemokrasi.adil.Entity.NGO;
 import com.adildemokrasi.adil.Entity.User;
-import com.adildemokrasi.adil.Repository.AddressRepository;
-import com.adildemokrasi.adil.Repository.EventRepository;
-import com.adildemokrasi.adil.Repository.NgoRepository;
-import com.adildemokrasi.adil.Repository.UserRepository;
+import com.adildemokrasi.adil.Repository.*;
 import com.adildemokrasi.adil.RequestObjects.EventRequestDTO;
+import com.adildemokrasi.adil.RequestObjects.NewEventUserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +36,9 @@ public class EventService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
 
     public void addEventToUser(Event event, User user){
@@ -85,5 +91,51 @@ public class EventService {
         catch(Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown Error");
         }
+    }
+
+    public EventCommentsDTO getEventComments(String eventName) {
+        Optional<Event> optEvent = eventRepository.findByTitle(eventName);
+        Event event = optEvent.get();
+        EventCommentsDTO eventCommentsDTO = new EventCommentsDTO();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.map(event, eventCommentsDTO);
+        int length = event.getCommentList().size();
+        List<Comment> commentList = event.getCommentList();
+        for(int i = 0; i < length; i++){
+            eventCommentsDTO.getCommentList().get(i).setUsername(event.getCommentList().get(i).getUser().getUsername());
+            eventCommentsDTO.getCommentList().get(i).setEvent(eventName);
+        }
+        return eventCommentsDTO;
+    }
+
+    public void addComment(CommentDTO commentDTO){
+        Comment comment = new Comment();
+        comment.setComment(commentDTO.getComment());
+        Optional<User> user = userRepository.findByUsername(commentDTO.getUsername());
+        comment.setUser(user.get());
+        comment.setDate(commentDTO.getDate());
+        user.get().addComment(comment);
+        Optional<Event> event = eventRepository.findByTitle(commentDTO.getEvent());
+        event.get().addComment(comment);
+        comment.setEvent(event.get());
+        commentRepository.save(comment);
+    }
+
+    public EventUserListDTO getParticipants(String eventName) {
+        Optional <Event> eventOptional = eventRepository.findByTitle(eventName);
+        Event event = eventOptional.get();
+        ModelMapper mapper = new ModelMapper();
+        EventUserListDTO eventUserListDTO = new EventUserListDTO();
+        mapper.map(event, eventUserListDTO);
+        return eventUserListDTO;
+    }
+
+    public void addUserToEvent(NewEventUserDTO eventUserDTO) {
+        Optional<Event> eventOptional = eventRepository.findByTitle(eventUserDTO.getEvent());
+        Event event = eventOptional.get();
+        Optional<User> userOptional = userRepository.findByUsername(eventUserDTO.getUsername());
+        event.addUser(userOptional.get());
+        userOptional.get().addEvent(event);
+        userRepository.save(userOptional.get());
     }
 }
