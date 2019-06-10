@@ -16,6 +16,7 @@ public class Event extends BaseCreation {
     @NotNull
     private String title;
 
+    @Column(length = 2000)
     private String content;
 
     @NotNull

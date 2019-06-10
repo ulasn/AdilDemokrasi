@@ -2,6 +2,7 @@ package com.adildemokrasi.adil.Service;
 
 import com.adildemokrasi.adil.Dto.CommentDTO;
 import com.adildemokrasi.adil.Dto.EventCommentsDTO;
+import com.adildemokrasi.adil.Dto.EventDetailDTO;
 import com.adildemokrasi.adil.Dto.EventUserListDTO;
 import com.adildemokrasi.adil.Entity.Comment;
 import com.adildemokrasi.adil.Entity.Event;
@@ -137,5 +138,34 @@ public class EventService {
         event.addUser(userOptional.get());
         userOptional.get().addEvent(event);
         userRepository.save(userOptional.get());
+    }
+
+    public EventDetailDTO getEventDetails(String username, String eventName) {
+        Optional <Event> eventOptional = eventRepository.findByTitle(eventName);
+        Event event = eventOptional.get();
+        EventDetailDTO eventDetailDTO = new EventDetailDTO();
+        if(username.equals(event.getCreator().getUsername())){
+            eventDetailDTO.setAdmin(true);
+        }
+        else{
+            eventDetailDTO.setAdmin(false);
+        }
+
+        eventDetailDTO.setParticipant(false);
+        for(User user : event.getUsers()){
+            if(user.getUsername().equals(username)){
+                eventDetailDTO.setParticipant(true);
+            }
+        }
+        return eventDetailDTO;
+    }
+
+    public void joinUserToEvent(NewEventUserDTO eventUserDTO) {
+        Event event = eventRepository.findByTitle(eventUserDTO.getEvent()).get();
+        User user = userRepository.findByUsername(eventUserDTO.getUsername()).get();
+        event.addUser(user);
+        user.addEvent(event);
+        userRepository.save(user);
+        eventRepository.save(event);
     }
 }

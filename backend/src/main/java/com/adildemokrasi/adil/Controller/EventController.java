@@ -2,6 +2,7 @@ package com.adildemokrasi.adil.Controller;
 
 import com.adildemokrasi.adil.Dto.CommentDTO;
 import com.adildemokrasi.adil.Dto.EventCommentsDTO;
+import com.adildemokrasi.adil.Dto.EventDetailDTO;
 import com.adildemokrasi.adil.Dto.EventUserListDTO;
 import com.adildemokrasi.adil.RequestObjects.NewEventUserDTO;
 import com.adildemokrasi.adil.Service.EventService;
@@ -38,5 +39,16 @@ public class EventController {
     @ResponseStatus(value = HttpStatus.OK)
     public void addUserToEvent (@RequestBody NewEventUserDTO newEventUserDTO){
         eventService.addUserToEvent(newEventUserDTO);
+    }
+
+    @RequestMapping(path="/get/details", method = RequestMethod.GET)
+    public @ResponseBody
+    EventDetailDTO getEventDetails(@RequestParam("username") String username, @RequestParam("event") String eventName){
+        return eventService.getEventDetails(username, eventName);
+    }
+
+    @RequestMapping(path="/join", method = RequestMethod.POST)
+    public void joinEvent(@RequestBody NewEventUserDTO eventUserDTO){
+        eventService.joinUserToEvent(eventUserDTO);
     }
 }

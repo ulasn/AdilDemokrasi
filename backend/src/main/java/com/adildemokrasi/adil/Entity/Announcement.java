@@ -20,6 +20,7 @@ public class Announcement extends BaseCreation {
     @NotNull
     private String title;
 
+    @Column(length = 2000)
     private String post;
 
     @ManyToOne

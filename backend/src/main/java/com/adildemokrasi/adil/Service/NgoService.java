@@ -1,8 +1,6 @@
 package com.adildemokrasi.adil.Service;
 
-import com.adildemokrasi.adil.Dto.AnnouncementDTO;
-import com.adildemokrasi.adil.Dto.EventDTO;
-import com.adildemokrasi.adil.Dto.NgoProfileDto;
+import com.adildemokrasi.adil.Dto.*;
 import com.adildemokrasi.adil.Entity.Announcement;
 import com.adildemokrasi.adil.Entity.Event;
 import com.adildemokrasi.adil.Entity.NGO;
@@ -124,5 +122,55 @@ public class NgoService {
         }
 
         ngoRepository.save(ngo);
+    }
+
+    public ModelDTO getModelData() {
+        List<NGO> ngoList = ngoRepository.findAll();
+        ModelDTO modelDTO = new ModelDTO();
+        for(NGO group : ngoList){
+            for(Event event : group.getEvents()){
+                NewsItemDTO newsItemDTO = new NewsItemDTO();
+                newsItemDTO.setContent(event.getContent());
+                newsItemDTO.setDate(event.getDate().substring(0, 10));
+                newsItemDTO.setEventLocation(event.getAddress().getRoute());
+                newsItemDTO.setEventTime(event.getDate().substring(11,16));
+                newsItemDTO.setTitle(event.getTitle());
+                newsItemDTO.setTag(group.getTag());
+                newsItemDTO.setType("event");
+                newsItemDTO.setGroupName(group.getName());
+
+                if(newsItemDTO.getTag().equals("çevre")){
+                    modelDTO.addEnviromentNews(newsItemDTO);
+                }
+                else if(newsItemDTO.getTag().equals("eğitim")){
+                    modelDTO.addEducationNews(newsItemDTO);
+                }
+                else if(newsItemDTO.getTag().equals("kültür")){
+                    modelDTO.addCultureNews(newsItemDTO);
+                }
+            }
+
+            for(Announcement announcement : group.getAnnouncements()){
+                NewsItemDTO newsItemDTO = new NewsItemDTO();
+                newsItemDTO.setContent(announcement.getPost());
+                newsItemDTO.setDate(announcement.getCreatedAt().toString());
+                newsItemDTO.setEventTime(announcement.getCreatedAt().toString());
+                newsItemDTO.setTitle(announcement.getTitle());
+                newsItemDTO.setTag(group.getTag());
+                newsItemDTO.setType("announcement");
+                newsItemDTO.setGroupName(group.getName());
+
+                if(newsItemDTO.getTag().equals("çevre")){
+                    modelDTO.addEnviromentNews(newsItemDTO);
+                }
+                else if(newsItemDTO.getTag().equals("eğitim")){
+                    modelDTO.addEducationNews(newsItemDTO);
+                }
+                else if(newsItemDTO.getTag().equals("kültür")){
+                    modelDTO.addCultureNews(newsItemDTO);
+                }
+            }
+        }
+        return modelDTO;
     }
 }

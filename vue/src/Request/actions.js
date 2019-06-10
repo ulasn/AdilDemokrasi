@@ -280,6 +280,58 @@ export default {
         .catch(response => {
           return response
         })
+  },
+
+  getEventDetails(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token"),
+      },
+      params:{
+        username: data.username,
+        event: data.event
+      }
+    };
+
+    return Axios.get("/event/get/details", config)
+                .then(response => {
+                  return response
+                }).catch(response => {
+                  return response
+                })
+  },
+
+  joinEvent(data){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    }
+
+      return Axios.post("event/join", data, config)
+              .then(response => {
+                return response
+              })
+              .catch(response =>{
+                return response
+              })
+    
+  },
+
+  getGroupNews(){
+    var config = {
+      headers: {
+        Authorization: "bearer " + localStorage.getItem("access_token")
+      }
+    };
+
+    return Axios.get("ngo/get/model", config)
+                .then(response =>{
+                  return response;
+                })
+                .catch(response => {
+                  return response
+                })
   }
 
 };

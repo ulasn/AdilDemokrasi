@@ -172,6 +172,7 @@ public class UserService {
         for(CommentDTO commentDTO : userProfileDTO.getComments()){
             commentDTO.setUsername(user.getUsername());
             commentDTO.setComment(commentList.get(index).getComment());
+            commentDTO.setEvent(commentList.get(index).getEvent().getTitle());
         }
 
         if(user.getEvents().size() == 0){

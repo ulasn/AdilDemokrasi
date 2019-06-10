@@ -12,7 +12,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @SpringBootApplication
@@ -52,18 +51,32 @@ public class AdilApplication {
 
 		Set<Role> currentRoles = new HashSet<>(roleService.getRoles());
 		User adminUser = new User(
-				"ulas", //username
-				"nuhoglu", //password
+				"Admin", //username
+				" ",
 				"admin",
-				"email",
-				"admin",
+				"ulasn@sabanciuniv.edu",
+				"asd",
 				currentRoles
 		);
 
+		Role userRole= roleService.getRole("USER");
+		Set<Role> userRoleSet = new HashSet<>();
+		userRoleSet.add(userRole);
+		User firstUser = new User(
+					"Ulaş",
+					"Nuhoğlu",
+					"ulasn",
+					"ulasn@sabanciuniv.edu",
+					"asd",
+					userRoleSet
+		);
+
 		adminUser.setActive(true);
+		firstUser.setActive(true);
 
 		return args -> {
 			service.save(adminUser);
+			service.save(firstUser);
 		};
 	}
 

@@ -18,6 +18,7 @@ public class NGO extends BaseCreation {
     @NotNull
     private String name;
 
+    @Column(length = 2000)
     private String description;
 
     @OneToMany

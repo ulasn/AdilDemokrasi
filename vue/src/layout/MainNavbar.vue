@@ -16,7 +16,7 @@
         <router-link class="nav-link" to="/about">Hakkında</router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link" to="/organization">Kurumlar</router-link>
+        <router-link class="nav-link" to="/organization" v-if="isLogged === true">Forum</router-link>
       </li>
 
       <li class="nav-item" v-if="isLogged === true">

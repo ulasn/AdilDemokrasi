@@ -1,6 +1,7 @@
 package com.adildemokrasi.adil.Controller;
 
 
+import com.adildemokrasi.adil.Dto.ModelDTO;
 import com.adildemokrasi.adil.Dto.NgoProfileDto;
 import com.adildemokrasi.adil.RequestObjects.AnnouncementRequestDTO;
 import com.adildemokrasi.adil.RequestObjects.EventRequestDTO;
@@ -54,5 +55,11 @@ public class NgoController {
     @RequestMapping(path="/get/profile", method = RequestMethod.GET)
     public @ResponseBody NgoProfileDto getUserProfileData(@RequestParam(name = "name") String name) throws Exception{
         return ngoService.getNgoProfileData(name);
+    }
+
+    @RequestMapping(path="/get/model", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelDTO getModel(){
+        return ngoService.getModelData();
     }
 }

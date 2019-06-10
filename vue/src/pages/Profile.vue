@@ -179,6 +179,7 @@
                     <template slot="label">
                       <i class="now-ui-icons objects_umbrella-13"></i> Ana Sayfa
                     </template>
+                    <center v-if = "news.length == 0"><h5>Ana Sayfanızda yeni bir haber bulunmamaktadır.</h5></center>
                     <ul>
                       <li v-for="feed in news" :key="feed.time">
                         <div v-if="feed.type == 'event'" class="feed">
@@ -288,9 +289,12 @@
                                   {{modalEvent.time}}
                                 </p>
                                 <br>
-
+                                <div v-if="!eventParticipant">
+                                <h5>Bu etkinlikle alakalı gelişmeleri takip etmek için katıl.</h5>
+                                <n-button type ="default" @click = "joinEvent"> Katıl </n-button>
+                                </div>
                                 <div class="parentParticipant">
-                                  <div class="addParticipant">
+                                  <div class="addParticipant" v-if="eventAdmin">
                                     <h5>
                                       <b>Katılımcı Ekle</b>
                                     </h5>
@@ -389,7 +393,7 @@
                                   type="danger"
                                   @click.native="eventDetailsModal = false"
                                 >Kapat</n-button>
-                                <n-button @click="participateEvent" v-if="!ownUser">Katıl</n-button>
+                                <n-button @click="joinEvent" v-if="!ownUser">Katıl</n-button>
                               </template>
                             </modal>
                           </div>
@@ -581,6 +585,8 @@ export default {
         title: "",
         post: ""
       },
+      eventAdmin:false,
+      eventParticipant:false,
       eventUsers: [],
       eventComments: [],
       newComment: "",
@@ -678,9 +684,33 @@ export default {
 
     getEventUsers(event) {
       var self = this;
-      Actions.getEventUsers(event.title).then(response => {
+      Actions.getEventUsers(this.currentEvent).then(response => {
         self.eventUsers = response.data.users;
       });
+    },
+
+    getDetails(event){
+        let request ={
+          username: localStorage.getItem("username"),
+          event: event.title
+        }
+        var self = this;
+        Actions.getEventDetails(request)
+            .then(response => {
+              if(response.data.admin){
+                   self.eventAdmin = true
+              }
+              else{
+                self.eventAdmin = false
+              }
+              if(response.data.participant){
+                self.eventParticipant = true
+              }
+              else{
+                self.eventParticipant = false
+              }
+               
+            })
     },
 
     details(event) {
@@ -689,6 +719,7 @@ export default {
       this.currentEvent = event.title;
       this.getEventComments(event);
       this.getEventUsers(event);
+      this.getDetails(event)
     },
 
     events() {
@@ -724,6 +755,7 @@ export default {
     },
 
     getNews() {
+      this.news = []
       var newItem = {
         title: "",
         content: "",
@@ -909,7 +941,6 @@ export default {
         title: this.currentEvent
       };
       Actions.addComment(comment).then(response => {
-        debugger;
         if (response) {
           this.$alert("Yorumunuz başarıyla kaydedildi.");
           this.getEventComments(temp);
@@ -958,6 +989,21 @@ export default {
 
                 }
               })
+    },
+    joinEvent(){
+      let request={
+        username: localStorage.getItem('username'),
+        event: this.currentEvent
+      };
+      var self = this;
+      Actions.joinEvent(request)
+            .then(response => {
+              if(response){
+                this.$alert("Grup katılımcı listesine eklendiniz. Bu grupla alakalı duyuru ve haberler artık Ana Sayfanızda gözükecek.")
+                self.eventParticipant = true;   
+                this.getEventUsers(self.currentEvent)   
+              }
+            })
     }
   }
 };

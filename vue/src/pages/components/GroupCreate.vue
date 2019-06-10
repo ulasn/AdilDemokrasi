@@ -26,15 +26,14 @@
           </el-form-item>
 
           <label for="tag">Tag</label>
-          <el-form-item prop="description">
-            <el-input
-              name="tag"
-              type="input"
-              :autosize="{ minRows: 6, maxRows: 6}"
-              placeholder="Grubun alanını belirten bir tag girin(Örn: Çevre, Eğitim)"
-              v-model="group.tag"
-            ></el-input>
+          <el-form-item prop="tag">
+          <el-select name ="tag" v-model="group.tag" placeholder="Select">
+            <el-option label="Eğitim" value="eğitim"></el-option>
+            <el-option label="Çevre" value="çevre"></el-option>
+            <el-option label="Kültür" value="kültür"></el-option>
+          </el-select>
           </el-form-item>
+          
 
           <label for="twitter">Twitter</label>
           <el-form-item prop="twitter">
@@ -159,4 +158,15 @@ export default {
 .modal-content {
   width: 140%;
 }
+
+.el-select{
+  display:unset;
+}
+
+.el-select >>> .el-select-dropdown__item{
+text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
 </style>
